@@ -1,0 +1,81 @@
+<app-messages [message]="messageModal()" [size]="25"></app-messages>
+<app-messages [message]="storyTextModal()" [size]="15" (closed)="closeStoryText()"></app-messages>
+<div class="flash-overlay" [class.active]="flashActive()"></div>
+
+<div [class]="modalOpen() ? 'mask-card' : ''"></div>
+<app-story-selector [show]="modalStory()" (return)="storySelected($event)"></app-story-selector>
+
+<div class="story-header" *ngIf="hasStorySelected()">
+    <ion-title color="primary">{{selectedStory()?.name}}</ion-title>
+</div>
+
+<div *ngIf="hasStorySelected()" class="previous-btn">
+    <ion-button fill="outline" size="small" *ngIf="hasStorySelected() && storyBlockIndex() > 0" (click)="storyPrevious()">
+        Voltar
+    </ion-button>
+</div>
+<div *ngIf="hasStorySelected()" class="next-btn">
+    <ion-button [disabled]="monsterSelectedCards().length > 0" fill="outline" size="small"  class="pulse-button" *ngIf="hasStorySelected() && (storyBlockIndex() < storyBlockCount())" (click)="storyNext()">
+        {{ storyBlockIndex() > 0 ? "Continuar" : "Iniciar" }}
+    </ion-button>
+</div>
+<div *ngIf="hasStorySelected() && storyBlockIndex() == storyBlockCount() && storyBlockIndex() > 0" class="next-btn">
+    <ion-button [disabled]="monsterSelectedCards().length > 0" fill="outline" size="small"  class="pulse-button" (click)="reset()">
+        Resetar
+    </ion-button>
+</div>
+<div>
+    <div *ngIf="dice() > 0" class="dice-mask">
+        <div class="dice-result info">
+            <ion-label class="info-large" [color]="diceRolled() == true ? 'danger' : 'primary'">{{dice()}}</ion-label>
+        </div>
+    </div> 
+
+    <div *ngIf="dice() == 0 && selectedCard() == '' && !hasStorySelected()" class="left-top-view">
+        <div class="story-view">
+            <ion-icon id="story-btn" name="book" (click)="storySelection()"></ion-icon>
+        </div>
+    </div>
+    <div *ngIf="dice() == 0 && selectedCard() == ''" class="right-top-view">
+        <div class="dice-view">
+            <ion-img src="/assets/dices/d20.png" (click)="rollD20()"></ion-img>
+        </div>
+        <div class="dice-view">
+            <ion-img src="/assets/dices/d12.png" (click)="rollD12()"></ion-img>
+        </div>
+        <div class="dice-view">
+            <ion-img src="/assets/dices/d4.png" (click)="rollD4()"></ion-img>
+        </div>
+    </div>
+
+    <div *ngIf="!battleStarted()" class="story-status-view">
+        <ion-label color="primary">{{getStoryStatusMessage()}}</ion-label>
+    </div>
+
+    <div *ngIf="dice() == 0 && selectedCard() == ''" class="right-bottom-view">
+        <div *ngFor="let card of monsterSelectedCards(); let i = index;" class="card" [class]="card.isDying ? 'dying' : ''">
+            <ion-img [src]="card.source" (click)="monsterCardView(card.source)"></ion-img>
+
+            <div class="monster-hp-view">
+                <div class="health-icon primary"></div>
+                <ion-label class="info" color="primary">{{card.hp}}</ion-label>
+            </div>
+            <div class="monster-attack-view">
+                <div class="health-icon primary"></div>
+                <ion-label class="info" color="primary">{{card.hp}}</ion-label>
+            </div>
+            <div>
+                <ion-button size="small" class="plus" fill="outline" shape="round" (click)="addMonsterHealth(i)">
+                    <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+                </ion-button>
+                <ion-button size="small" class="minus"  fill="outline" shape="round" (click)="removeMonsterHealth(i)">
+                    <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
+                </ion-button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="selectedCard() != ''" class="card-view" (click)="resetCardView()">
+        <img [src]="selectedCard()">
+    </div>
+</div>

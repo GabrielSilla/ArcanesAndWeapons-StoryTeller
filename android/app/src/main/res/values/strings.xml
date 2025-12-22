@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">aa-game-storyteller</string>
+    <string name="title_activity_main">aa-game-storyteller</string>
+    <string name="package_name">com.aagame.app</string>
+    <string name="custom_url_scheme">com.aagame.app</string>
+</resources>

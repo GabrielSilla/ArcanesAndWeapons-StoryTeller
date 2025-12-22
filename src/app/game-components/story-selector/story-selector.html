@@ -1,0 +1,25 @@
+<div *ngIf="show" class="story-screen-overlay">
+</div>
+
+<ion-card class="story-selector" *ngIf="show && stories().stories.length > 0">
+  <ion-card-header>
+    <ion-card-title>Selecione a História</ion-card-title>
+  </ion-card-header>
+
+  <div class="story-item-content">
+        <ion-item>
+            <ion-select label="História" placeholder="" (ionChange)="handleStory($event)">
+              <ion-select-option *ngFor="let story of stories().stories" [value]="story.id">{{story.name}}</ion-select-option>
+            </ion-select>
+        </ion-item>
+  </div>
+
+  <div class="story-item-close">
+    <ion-button shape="round" size="small" fill="outline" (click)="close()">
+        <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
+    </ion-button>
+    <ion-button shape="round" size="small" fill="outline" (click)="choose()">
+        <ion-icon slot="icon-only" name="checkmark-circle-outline"></ion-icon>
+    </ion-button>
+  </div>
+</ion-card>

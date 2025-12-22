@@ -1,0 +1,465 @@
+.mask-card{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7); // máscara escura semitransparente
+    opacity: 1;
+    pointer-events: none;
+    z-index: 999;
+}
+
+.story-header {
+    font-family: "MedievalSharpBook";
+    font-size: 12px;
+    position: absolute;
+    justify-self: anchor-center;
+    top: 60px;
+}
+
+.next-btn {
+    ion-button {
+        font-family: "MedievalSharpBook";
+        bottom:20px;
+        margin-right: 20px;
+        font-size: 15px;
+        position: absolute;
+        z-index: 10;
+        right: 15px;
+    }
+}
+
+.previous-btn {
+    ion-button {
+        font-family: "MedievalSharpBook";
+        bottom:20px;
+        margin-left: 20px;
+        font-size: 15px;
+        position: absolute;
+        z-index: 10;
+        left: 15px;
+    }
+}
+
+.monster-random {
+    ion-button {
+        width: 110px;
+        position:absolute;
+        align-self: anchor-center;
+        justify-self: anchor-center;
+    }
+}
+
+.pulse-button {
+  border-radius: 5px;       // deixa completamente redondo
+  animation: pulse 1s infinite; // 1s de duração, loop infinito
+  transform-origin: center; // garante que cresça a partir do centro
+}
+
+.left-top-view {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    width: 65%;
+    padding:10px;
+}
+
+.right-top-view {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 20%;
+    padding:10px;
+    justify-items: end;
+}
+
+.left-bottom-view {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    width: 15%;
+    padding:10px;
+}
+
+.right-bottom-view {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+    align-self: anchor-center;
+    position: absolute;
+    left:0;
+    width: 100%;
+
+    .card {
+        width: 179px;
+        height: 267px;
+        padding: 2px 2px 2px 2px;
+        position: relative;
+        border-color: white;
+        margin: 0px 10px 0px 10px;
+    }
+
+    .minus {
+        position: absolute;
+        bottom: -80px;
+        left: 50px;
+    }
+    .plus {
+        position: absolute;
+        bottom: -80px;
+        right: 50px;
+    }
+}
+
+.health-icon {
+    margin-right: 20px;
+    width: 20px;
+    height: 20px;
+    background: var(--ion-color-primary);
+    mask-image: url('/assets/icons/hp.png');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+
+ion-icon {
+    color: var(--ion-color-primary);
+    font-size: 20px;
+}
+
+.life-img {
+    width: 70px;
+}
+
+.life-view {
+    display: flex;
+    align-items: center;
+
+    ion-label {
+        margin-left: 5px;
+    }
+
+    ion-button {
+        border-radius: 5px;
+        margin: 0px 7px 0px 7px;    
+    }
+}
+
+.monster-hp-view {
+    margin: 15px;
+    display: flex;
+    position: absolute;
+    justify-self: self-end;
+}
+
+.monster-attack-view {
+    margin: 15px;
+    display: flex;
+    position: absolute;
+    justify-self: self-start;
+}
+
+.level-view {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+
+    ion-label {
+        margin-left: 5px;
+    }
+
+    ion-button {
+        border-radius: 5px;
+        margin: 0px 7px 0px 7px;    
+    }
+
+    .level-icon {
+        margin-right: 5px;
+        width: 20px;
+        height: 20px;
+        background: var(--ion-color-primary);
+        mask-image: url('/assets/icons/level.png');
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+    }
+}
+
+.damage-view {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+
+    .attack-icon {
+        margin-right: 5px;
+        width: 20px;
+        height: 20px;
+        background: var(--ion-color-primary);
+        mask-image: url('/assets/icons/attack.png');
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+    }
+}
+
+.story-view {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+
+    ion-icon {
+        color: var(--ion-color-primary);
+        font-size: 40px;
+        margin-left: 10px
+    }
+}
+
+.dice-view {
+    margin-bottom: 8px;
+
+    ion-img {
+        width: 30px;
+    }
+}
+
+.dice-result {
+    margin-left: -7px;
+    position: absolute;
+    justify-self: anchor-center;
+    align-self: anchor-center;
+}
+
+.chest {
+    margin-right: -5px;
+    margin-top: 15px;
+    width: 40px;
+    height: 40px;
+    background: var(--ion-color-primary);
+    mask-image: url('/assets/chest.png');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+
+.bag {
+    margin-right: -5px;
+    margin-top: 15px;
+    width: 40px;
+    height: 40px;
+    background: var(--ion-color-primary);
+    mask-image: url('/assets/backpack.png');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+
+.coin {
+    margin-right: -7px;
+    margin-top: 15px;
+    width: 35px;
+    height: 35px;
+    background: var(--ion-color-primary);
+    mask-image: url('/assets/coin.png');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+
+.info {
+    font-size: 17px;
+    font-family: "MedievalSharpBook";
+}
+
+.info-large {
+    font-size: 73px;
+    font-family: "MedievalSharpBook";
+}
+
+.rolled {
+    font-color: yellowgreen !important;
+}
+
+.card-view {
+    position: absolute;
+    align-self: anchor-center;
+    justify-self: anchor-center;
+
+    img {
+        max-height: 95vh;
+    }
+}
+
+.flash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease-out;
+    z-index: 9999;
+}
+
+.flash-overlay.active {
+    opacity: 1;
+}
+
+.magic-card {
+    ion-img {
+        position: absolute;
+        width: 117px;
+    }
+}
+
+.new-items {
+    position: absolute;
+    place-self: center;
+    width: 380px;
+    z-index: 9997;
+    justify-self: anchor-center;
+    align-self: anchor-center;
+
+    --background: rgba(35, 35, 35, 0.95);
+    --backdrop-opacity: 0.7;
+    --backdrop-background: rgba(0, 0, 0, 0.7);
+
+    --border-radius: 20px;
+    --max-width: 500px;
+    --color: #f7d7a8;
+    --button-color: #f7d7a8;
+    --button-background: transparent;
+
+    font-family: "MedievalSharpBook";
+    text-align: center;
+
+    ion-card-header {
+        --background: rgba(72, 72, 72, 0.95);
+    }
+
+    ion-card-title {
+        --color: #f7d7a8;
+    }
+
+    ion-card-content {
+        padding-bottom: 2px;
+        padding-top: 2px;
+    }
+
+    .new-item-close {
+        float: inline-end;
+        padding: 5px;
+    }
+
+    .new-item-content {
+        margin-top: 10px;
+    }
+}
+
+.story-modal {
+    position: absolute;
+    place-self: anchor-center;
+    width: 80%;
+    z-index: 9997;
+
+    --background: rgba(35, 35, 35, 0.95);
+    --backdrop-opacity: 0.7;
+    --backdrop-background: rgba(0, 0, 0, 0.7);
+
+    --border-radius: 20px;
+    --max-width: 500px;
+    --color: #f7d7a8;
+    --button-color: #f7d7a8;
+    --button-background: transparent;
+
+    font-family: "MedievalSharpBook";
+    text-align: center;
+
+    ion-item {
+        --background: rgba(72, 72, 72, 0.95);
+        --color: #f7d7a8;
+        font-size: 14px;
+        --font-family: "MedievalSharpBook";
+
+        ion-select {
+                font-family: "MedievalSharpBook";
+        }
+    }
+
+    ion-card-title {
+        --color: #f7d7a8;
+    }
+
+    .change-item-close {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 5px;
+    }
+}
+
+.card {
+  will-change: transform, opacity;
+}
+
+@keyframes die {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+}
+
+.card.dying {
+  animation: die 300ms ease-in forwards;
+  pointer-events: none;
+}
+
+// Keyframes para o efeito de pulso
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  50% {
+    transform: scale(1.1); // aumenta 10%
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7); // efeito de brilho
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+}
+
+.story-status-view {
+    font-family: "MedievalSharpBook";
+    font-size: 37px;
+    position: absolute;
+    justify-self: anchor-center;
+}
+
+@media screen and (max-width: 650px) {
+    .right-bottom-view {
+        .card {
+            width: 100px;
+            margin: 0 2px 0 2px;
+        }
+    }
+
+    .magic-card {
+        ion-img {
+            width: 97px;
+        }
+    }
+    
+    .new-items {
+        width: 80%;
+    }
+}
+

@@ -1,0 +1,5 @@
+<div *ngIf="message != ''" class="message" [class]="'ft-' + size" (click)="close()">
+    <ion-label>{{message}}</ion-label>
+</div>
+<div *ngIf="message != ''" class="message-overlay">
+</div>
