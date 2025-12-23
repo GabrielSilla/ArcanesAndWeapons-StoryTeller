@@ -10,7 +10,7 @@ export class TtsService {
     private generationPath = "/assets/sounds/";
     private currentAudio: HTMLAudioElement | null = null;
 
-    public async speak(text: string, storyId: number, storyBlockId: number) {
+    public async speak(text: string, storyId: number, storyBlockId: number, voice: string) {
         let path = this.generationPath + storyId + "/" + storyBlockId + ".mp3";
 
         try {
@@ -19,7 +19,7 @@ export class TtsService {
             await this.playFromBlob(localAudio)
         } catch {
             console.log("Audio não existe");
-            await this.generate(text, storyBlockId);
+            await this.generate(text, storyBlockId, voice);
         }
     }
 
@@ -31,16 +31,16 @@ export class TtsService {
         }
     }
 
-    async generate(text: string, blockId: number) {
+    async generate(text: string, blockId: number, voice: string) {
         console.log("Iniciando geração");
         this.stop();
 
         var options = {
             provider: "openai",
             model: "gpt-4o-mini-tts",
-            voice: "sage",
+            voice: voice,
             response_format: "mp3",
-            instructions: "Deve ser o narrador de uma história medieval de fantasia. Coloque um entonação sombria, falas pausadas e dramaticas."
+            instructions: "Deve ser o narrador de uma história medieval de fantasia. A entonação deve ser sombria e dramatica."
         };
 
         const result: HTMLAudioElement = await puter.ai.txt2speech(text, options);

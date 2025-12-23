@@ -222,7 +222,7 @@ export class Game {
 
     async speak(text: string) {
         console.log(this.selectedStory().id, this.storyBlock().id);
-        await this.ttsService.speak(text, this.selectedStory().id, this.storyBlock().id);
+        await this.ttsService.speak(text, this.selectedStory().id, this.storyBlock().id, this.selectedStory().voice);
     }
 
     async closeStoryText() {
