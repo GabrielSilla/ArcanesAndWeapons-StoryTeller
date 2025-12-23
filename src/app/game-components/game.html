@@ -56,13 +56,15 @@
         <div *ngFor="let card of monsterSelectedCards(); let i = index;" class="card" [class]="card.isDying ? 'dying' : ''">
             <ion-img [src]="card.source" (click)="monsterCardView(card.source)"></ion-img>
 
-            <div class="monster-hp-view">
-                <div class="health-icon primary"></div>
-                <ion-label class="info" color="primary">{{card.hp}}</ion-label>
-            </div>
-            <div class="monster-attack-view">
-                <div class="health-icon primary"></div>
-                <ion-label class="info" color="primary">{{card.hp}}</ion-label>
+            <div class="monster-stats">
+                <div class="monster-attack-view">
+                    <div class="attack-icon primary"></div>
+                    <ion-label class="info" color="primary">{{getMonsterAttack(card)}}</ion-label>
+                </div>
+                <div class="monster-hp-view">
+                    <div class="health-icon primary"></div>
+                    <ion-label class="info" color="primary">{{card.hp}}</ion-label>
+                </div>
             </div>
             <div>
                 <ion-button size="small" class="plus" fill="outline" shape="round" (click)="addMonsterHealth(i)">

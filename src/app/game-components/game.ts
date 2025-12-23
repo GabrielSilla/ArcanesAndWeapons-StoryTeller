@@ -221,7 +221,8 @@ export class Game {
     }
 
     async speak(text: string) {
-        await this.ttsService.speak(text);
+        console.log(this.selectedStory().id, this.storyBlock().id);
+        await this.ttsService.speak(text, this.selectedStory().id, this.storyBlock().id);
     }
 
     async closeStoryText() {
@@ -233,7 +234,6 @@ export class Game {
     }
 
     async initMusic() {
-        await this.musicService.init();
         await this.musicService.startAmbient();
     }
 
@@ -293,6 +293,13 @@ export class Game {
             return "História concluída! Parabéns aventureiros."
         else
             return "Prossiga aventureiro!"   
+    }
+
+    getMonsterAttack(card: CardModel) {
+        if(card.shouldIncrementLevel)
+            return this.storyBlock().level + card.attack;
+        else 
+            return card.attack;
     }
 
     reset() {

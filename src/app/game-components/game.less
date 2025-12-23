@@ -112,17 +112,6 @@
     }
 }
 
-.health-icon {
-    margin-right: 20px;
-    width: 20px;
-    height: 20px;
-    background: var(--ion-color-primary);
-    mask-image: url('/assets/icons/hp.png');
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    mask-position: center;
-}
-
 ion-icon {
     color: var(--ion-color-primary);
     font-size: 20px;
@@ -146,18 +135,42 @@ ion-icon {
     }
 }
 
-.monster-hp-view {
-    margin: 15px;
-    display: flex;
-    position: absolute;
-    justify-self: self-end;
-}
 
-.monster-attack-view {
-    margin: 15px;
+.monster-stats {
     display: flex;
-    position: absolute;
-    justify-self: self-start;
+    justify-content: space-evenly;
+
+    .monster-hp-view {
+        margin: 15px;
+        display: flex;
+        
+        .health-icon {
+            margin-right: 5px;
+            width: 20px;
+            height: 20px;
+            background: var(--ion-color-primary);
+            mask-image: url('/assets/icons/hp.png');
+            mask-size: contain;
+            mask-repeat: no-repeat;
+            mask-position: center;
+        }
+    }
+
+    .monster-attack-view {
+        margin: 15px;
+        display: flex;
+        
+        .attack-icon {
+            margin-right: 5px;
+            width: 20px;
+            height: 20px;
+            background: var(--ion-color-primary);
+            mask-image: url('/assets/icons/attack.png');
+            mask-size: contain;
+            mask-repeat: no-repeat;
+            mask-position: center;
+        }
+    }
 }
 
 .level-view {
@@ -186,22 +199,6 @@ ion-icon {
     }
 }
 
-.damage-view {
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-
-    .attack-icon {
-        margin-right: 5px;
-        width: 20px;
-        height: 20px;
-        background: var(--ion-color-primary);
-        mask-image: url('/assets/icons/attack.png');
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
-    }
-}
 
 .story-view {
     margin-top: 10px;
@@ -463,3 +460,11 @@ ion-icon {
     }
 }
 
+@media screen and (min-width: 1270px) {
+    .right-bottom-view {
+        .card {
+            width: 229px;
+            height: 350px;
+        }
+    }
+}

@@ -1,24 +1,15 @@
 import { Injectable } from '@angular/core';
-import { NativeAudio } from '@capacitor-community/native-audio';
 
 @Injectable({ providedIn: 'root' })
 export class MusicService {
 
-  private tracks = Array.from({ length: 10 }, (_, i) => `bg${i + 1}`);
+  private tracks = Array.from({ length: 10 }, (_, i) => `background${i + 1}`);
   private lastTrack: string | null = null;
   private playing = false;
-  private volume = 0.10;
+  private volume = 0.3;
 
-  async init() {
-    for (let i = 1; i <= 10; i++) {
-      await NativeAudio.preload({
-        assetId: `bg${i}`,
-        assetPath: `background${i}.mp3`,
-        volume: this.volume,
-        isUrl: false
-      });
-    }
-  }
+  private bgPath = "/assets/audio/";
+  private currentAudio: HTMLAudioElement | null = null;
 
   async startAmbient() {
     if (this.playing) return;
@@ -29,24 +20,19 @@ export class MusicService {
 
   async stop() {
     this.playing = false;
-
-    for (const id of this.tracks) {
-      try {
-        await NativeAudio.stop({ assetId: id });
-      } catch {}
-    }
   }
 
   private async playRandom() {
     if (!this.playing) return;
 
     let next = this.randomTrack();
-
     this.lastTrack = next;
 
-    await NativeAudio.play({ assetId: next });
-
+    let localAudio = await this.audioExists(this.bgPath + next + ".mp3");
+    await this.playFromBlob(localAudio)
+    
     const duration = this.getTrackDuration(next);
+    console.log(next, duration);
 
     setTimeout(() => {
       this.playRandom();
@@ -64,29 +50,47 @@ export class MusicService {
 
   private getTrackDuration(trackId: string): number {
     const durations: Record<string, number> = {
-      bg1: 222000,
-      bg2: 127000,
-      bg3: 197000,
-      bg4: 188000,
-      bg5: 116000,
-      bg6: 198000,
-      bg7: 195000,
-      bg8: 246000,
-      bg9: 212000,
-      bg10: 148000,
+      background1: 222000,
+      background2: 127000,
+      background3: 197000,
+      background4: 188000,
+      background5: 116000,
+      background6: 198000,
+      background7: 195000,
+      background8: 246000,
+      background9: 212000,
+      background10: 148000,
     };
 
     return durations[trackId] || 180000;
   }
 
-  async setVolume(value: number) {
-    this.volume = value;
+  async audioExists(path: string): Promise<Blob> {
+      const response = await fetch(path);
+      if (!response.ok) {
+          throw new Error('Áudio não encontrado');
+      }
 
-    for (const id of this.tracks) {
-      await NativeAudio.setVolume({
-        assetId: id,
-        volume: value
-      });
-    }
+      return await response.blob();
+  }
+
+  async playFromBlob(blob: Blob) {
+      // limpa áudio anterior
+      if (this.currentAudio) {
+          this.currentAudio.pause();
+          this.currentAudio = null;
+      }
+
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+
+      audio.volume = 0.04;
+
+      audio.onended = () => {
+          URL.revokeObjectURL(url); // evita vazamento de memória
+      };
+
+      this.currentAudio = audio;
+      await audio.play();
   }
 }
