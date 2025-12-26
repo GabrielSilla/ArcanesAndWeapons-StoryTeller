@@ -6,6 +6,8 @@ import { InitScreen } from "./game-components/init-screen/init-screen";
 import { single } from 'rxjs';
 import { NativeAudio } from '@capacitor-community/native-audio';
 import { MusicService } from './services/music.service';
+import { ScreenOrientation } from '@capacitor/screen-orientation';
+import { KeepAwake } from '@capacitor-community/keep-awake';
 
 @Component({
   selector: 'app-root',
@@ -39,7 +41,10 @@ export class App {
     this.bgN.set("bg-" + event);
   }
 
-  InitScreen() {
+  async InitScreen() {
+    await ScreenOrientation.lock({ orientation: 'landscape' });
+    await KeepAwake.keepAwake();
+
     this.showInit.set(true);
     this.initImg.set(this.logoImg);
     
