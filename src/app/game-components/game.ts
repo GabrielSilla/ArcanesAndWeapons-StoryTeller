@@ -9,7 +9,7 @@ import { StorySelector } from './story-selector/story-selector';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { MusicService } from '../services/music.service';
 import { CardModel } from '../static/card-model';
-import { single } from 'rxjs';
+import { DecisionOption } from '../static/story-block';
 import { TtsService } from '../services/tts.service';
 
 @Component({
@@ -42,6 +42,8 @@ export class Game {
     messageModal = signal("");
     storyTextModal = signal("");
     modalStory = signal(false);
+    modalDecisionOpen = signal(false);
+    modalDecisionData = signal<{ narrative: string; title: string; options: DecisionOption[] } | null>(null);
     battleStarted = signal(false);
 
     // Atributes
@@ -52,12 +54,11 @@ export class Game {
     stories = new Stories();
 
     selectedCard = signal("");
-
     selectedStory = signal<any>({});
     hasStorySelected = signal(false);
     storyBlockIndex = signal(0);
     storyBlockCount = signal(0);
-    storyBlock = signal<any>({})
+    storyBlock = signal<any>({});
 
     public rollD20() {
         this.animateTo(20);
@@ -142,23 +143,28 @@ export class Game {
                 }
             }
         } else {
-            let deck = this.cards.bosses;
-            this.pickAMonster(deck);
+            const deck = this.cards.bosses;
+            const forcedBossId = this.storyBlock().bossId;
+            this.pickAMonster(deck, forcedBossId);
         }
     }
 
-    pickAMonster(deck: CardModel[]) {
+    pickAMonster(deck: CardModel[], forcedId?: number) {
         const firstId = deck[0].id;
-        const selectedId =
-            Math.floor(Math.random() * deck.length) + firstId;
+        let selectedId = forcedId ?? (Math.floor(Math.random() * deck.length) + firstId);
 
-        const baseCard = deck.find(card => card.id === selectedId);
+        let baseCard = deck.find(card => card.id === selectedId);
+        if (!baseCard && forcedId != null) {
+            selectedId = Math.floor(Math.random() * deck.length) + firstId;
+            baseCard = deck.find(card => card.id === selectedId);
+        }
         if (!baseCard) return;
 
         // 🔑 CLONE
+        const hpModifier = this.storyBlock().bossHpModifier ?? 0;
         const selectedCard: CardModel = {
             ...baseCard,
-            hp: baseCard.hp + this.storyBlock().level
+            hp: baseCard.hp + this.storyBlock().level + hpModifier
         };
 
         this.monsterSelectedCards.update(list => [
@@ -190,6 +196,7 @@ export class Game {
             this.selectedStory.set(story);
             this.hasStorySelected.set(true);
             this.storyBlockCount.set(story.blocks.length);
+            this.storyBlock.set(story.blocks[0] || {});
         }
         
         this.modalStory.set(false);
@@ -199,6 +206,14 @@ export class Game {
     async storyNext() {      
         this.storyBlockIndex.set(this.storyBlockIndex() + 1);
         let block = this.selectedStory()?.blocks[this.storyBlockIndex() - 1];
+
+        if (block && block.blockType === 'decision' && block.decisionOptions?.length) {
+            this.storyBlock.set(block);
+            this.bgChange.emit(block.background);
+            this.modalDecisionData.set({ narrative: block.narrative, title: block.title, options: block.decisionOptions });
+            this.modalDecisionOpen.set(true);
+            return;
+        }
 
         this.showStoryText(block.narrative);
         this.storyBlock.set(block);
@@ -210,6 +225,11 @@ export class Game {
         this.storyBlockIndex.set(this.storyBlockIndex() - 1);
         let block = this.selectedStory()?.blocks[this.storyBlockIndex() - 1];
 
+        if (block && block.blockType === 'decision') {
+            this.modalDecisionOpen.set(false);
+            this.modalDecisionData.set(null);
+        }
+
         if(block) {
             this.showStoryText(block.narrative);
             this.storyBlock.set(block);
@@ -217,6 +237,35 @@ export class Game {
         } else {
             this.bgChange.emit("portal");
             this.storyBlock.set({});
+        }
+    }
+
+    async decisionChoice(targetStoryId: number) {
+        this.modalDecisionOpen.set(false);
+        this.modalDecisionData.set(null);
+
+        const story = this.stories.stories.find(s => s.id === targetStoryId);
+        if (!story) return;
+
+        this.selectedStory.set(story);
+        this.hasStorySelected.set(true);
+        this.storyBlockCount.set(story.blocks.length);
+        this.storyBlockIndex.set(0);
+        this.monsterSelectedCards.set([]);
+
+        this.storyBlockIndex.set(1);
+        const block = story.blocks[0];
+
+        if (block && block.blockType === 'decision' && block.decisionOptions?.length) {
+            this.storyBlock.set(block);
+            this.bgChange.emit(block.background);
+            this.modalDecisionData.set({ narrative: block.narrative, title: block.title, options: block.decisionOptions });
+            this.modalDecisionOpen.set(true);
+        } else {
+            this.showStoryText(block.narrative);
+            this.storyBlock.set(block);
+            this.bgChange.emit(block.background);
+            await this.speak(block.narrative);
         }
     }
 
@@ -303,6 +352,8 @@ export class Game {
     }
 
     reset() {
+        this.modalDecisionOpen.set(false);
+        this.modalDecisionData.set(null);
         this.selectedStory.set({});
         this.hasStorySelected.set(false);
         this.battleStarted.set(false);

@@ -10,12 +10,76 @@
     z-index: 999;
 }
 
+/* Modal de decisão (ramificações) */
+.story-screen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9998;
+}
+
+.decision-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    z-index: 9999;
+    font-family: "MedievalSharpBook";
+
+    --background: rgba(35, 35, 35, 0.95);
+    --color: #f7d7a8;
+    --button-color: #f7d7a8;
+
+    ion-card-title {
+        --color: #f7d7a8;
+        font-size: 18px;
+    }
+
+    .decision-narrative {
+        color: #f7d7a8;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    .decision-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        ion-button {
+            font-family: "MedievalSharpBook";
+        }
+    }
+}
+
 .story-header {
     font-family: "MedievalSharpBook";
-    font-size: 12px;
-    position: absolute;
-    justify-self: anchor-center;
+    font-size: 16px;
+    position: fixed;
+    left: 0;
+    right: 0;
     top: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1002; /* Acima da máscara (999) e do texto da história (1000) */
+    pointer-events: none;
+    width: 100vw;
+
+    .story-header-title {
+        color: var(--ion-color-primary);
+        text-align: center;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 90%;
+    }
 }
 
 .next-btn {
@@ -203,12 +267,25 @@ ion-icon {
 .story-view {
     margin-top: 10px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
 
     ion-icon {
         color: var(--ion-color-primary);
         font-size: 40px;
-        margin-left: 10px
+    }
+}
+
+.story-moment-title {
+    font-family: "MedievalSharpBook";
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.story-moment-view {
+    .story-moment-title {
+        font-size: 16px;
     }
 }
 

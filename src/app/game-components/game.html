@@ -5,8 +5,24 @@
 <div [class]="modalOpen() ? 'mask-card' : ''"></div>
 <app-story-selector [show]="modalStory()" (return)="storySelected($event)"></app-story-selector>
 
+<!-- Modal de decisão (ramificações) -->
+<div *ngIf="modalDecisionOpen()" class="story-screen-overlay"></div>
+<ion-card *ngIf="modalDecisionOpen() && modalDecisionData()" class="decision-modal">
+  <ion-card-header>
+    <ion-card-title>{{ modalDecisionData()!.title }}</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <p class="decision-narrative">{{ modalDecisionData()!.narrative }}</p>
+    <div class="decision-options">
+      <ion-button *ngFor="let opt of modalDecisionData()!.options" fill="outline" expand="block" (click)="decisionChoice(opt.targetStoryId)">
+        {{ opt.label }}
+      </ion-button>
+    </div>
+  </ion-card-content>
+</ion-card>
+
 <div class="story-header" *ngIf="hasStorySelected()">
-    <ion-title color="primary">{{selectedStory()?.name}}</ion-title>
+    <span class="story-header-title">{{selectedStory()?.name}}</span>
 </div>
 
 <div *ngIf="hasStorySelected()" class="previous-btn">
@@ -33,8 +49,12 @@
 
     <div *ngIf="dice() == 0 && selectedCard() == '' && !hasStorySelected()" class="left-top-view">
         <div class="story-view">
+            <ion-label class="story-moment-title">Aventuras</ion-label>
             <ion-icon id="story-btn" name="book" (click)="storySelection()"></ion-icon>
         </div>
+    </div>
+    <div *ngIf="dice() == 0 && selectedCard() == '' && hasStorySelected()" class="left-top-view story-moment-view">
+        <ion-label class="story-moment-title" color="primary">{{ storyBlock()?.title }}</ion-label>
     </div>
     <div *ngIf="dice() == 0 && selectedCard() == ''" class="right-top-view">
         <div class="dice-view">

@@ -40,7 +40,10 @@ export class TtsService {
             model: "gpt-4o-mini-tts",
             voice: voice,
             response_format: "mp3",
-            instructions: "Deve ser o narrador de uma história medieval de fantasia. A entonação deve ser sombria e dramatica."
+            instructions: `Você é um narrador imersivo de RPG de mesa em português brasileiro. Estilo sombrio e cinematográfico, como contador de histórias à beira da fogueira.
+Ritmo: Velocidade moderada. Pausas naturais em vírgulas e pontos finais. Reticências (...) e travessões (—) indicam suspense ou ênfase — faça uma pausa dramática antes de continuar. Exclamações recebem entusiasmo controlado, sem gritar. Em frases longas, respire entre orações. Alongue sílabas em revelações e momentos de tensão; acelere levemente em cenas de ação. Entre parágrafos, faça uma pausa mais longa.
+Entonação: Tom grave e misterioso na narrativa descritiva. Mais presente e urgente em diálogos (texto entre aspas) — mude sutilmente a voz para diferenciar personagens do narrador. Antes de revelações, baixe o tom e fale mais devagar para criar suspense.
+Qualidade: Articule nomes e lugares com clareza. Evite soar robótico, apressado ou monótono. Cada frase deve construir atmosfera. Varie a intensidade de forma sutil, sem exageros. Soe sempre como alguém vivendo a história, não apenas lendo. Travessões (—) marcam uma pausa breve e dramática. Pontos de exclamação pedem ênfase, mas sem gritar.`
         };
 
         const result: HTMLAudioElement = await puter.ai.txt2speech(text, options);

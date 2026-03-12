@@ -184,6 +184,7 @@ export class Cards {
         new CardModel(12, "O Açougueiro", "/assets/cards/bosses/o-acougueiro.png", 25, 7),
         new CardModel(13, "Rainha Abissal", "/assets/cards/bosses/rainha-abissal.png", 20, 7),
         new CardModel(14, "Ulrik", "/assets/cards/bosses/ulrick.png", 10, 9),
-        new CardModel(15, "Voragun", "/assets/cards/bosses/voragun.png", 20, 7)
+        new CardModel(15, "Voragun", "/assets/cards/bosses/voragun.png", 20, 7),
+        new CardModel(16, "Lich", "/assets/cards/bosses/lich.png", 20, 3)
     ];
 }
