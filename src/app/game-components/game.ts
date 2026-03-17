@@ -6,6 +6,7 @@ import { Stories } from '../static/stories';
 import { ModalController } from '@ionic/angular';
 import { Messages } from './messages/messages';
 import { StorySelector } from './story-selector/story-selector';
+import { RulesComponent } from './rules/rules.component';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { MusicService } from '../services/music.service';
 import { CardModel } from '../static/card-model';
@@ -15,7 +16,7 @@ import { TtsService } from '../services/tts.service';
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [IonicModule, CommonModule, Messages, StorySelector],
+  imports: [IonicModule, CommonModule, Messages, StorySelector, RulesComponent],
   templateUrl: './game.html',
   styleUrl: './game.less'
 })
@@ -42,6 +43,7 @@ export class Game {
     messageModal = signal("");
     storyTextModal = signal("");
     modalStory = signal(false);
+    modalRules = signal(false);
     modalDecisionOpen = signal(false);
     modalDecisionData = signal<{ narrative: string; title: string; options: DecisionOption[] } | null>(null);
     battleStarted = signal(false);
@@ -101,6 +103,14 @@ export class Game {
 
     storySelection() {
         this.modalStory.set(true);
+    }
+
+    openRules() {
+        this.modalRules.set(true);
+    }
+
+    closeRules() {
+        this.modalRules.set(false);
     }
 
     // MESSAGE CONTROL

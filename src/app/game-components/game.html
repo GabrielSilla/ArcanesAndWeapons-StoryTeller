@@ -4,6 +4,7 @@
 
 <div [class]="modalOpen() ? 'mask-card' : ''"></div>
 <app-story-selector [show]="modalStory()" (return)="storySelected($event)"></app-story-selector>
+<app-rules [show]="modalRules()" (return)="closeRules()"></app-rules>
 
 <!-- Modal de decisão (ramificações) -->
 <div *ngIf="modalDecisionOpen()" class="story-screen-overlay"></div>
@@ -51,6 +52,9 @@
         <div class="story-view">
             <ion-label class="story-moment-title">Aventuras</ion-label>
             <ion-icon id="story-btn" name="book" (click)="storySelection()"></ion-icon>
+            <div class="rules-btn-row">
+                <ion-icon id="rules-btn" name="information-circle-outline" (click)="openRules()"></ion-icon>
+            </div>
         </div>
     </div>
     <div *ngIf="dice() == 0 && selectedCard() == '' && hasStorySelected()" class="left-top-view story-moment-view">
@@ -68,7 +72,7 @@
         </div>
     </div>
 
-    <div *ngIf="!battleStarted()" class="story-status-view">
+    <div *ngIf="!battleStarted() && dice() == 0" class="story-status-view">
         <ion-label color="primary">{{getStoryStatusMessage()}}</ion-label>
     </div>
 

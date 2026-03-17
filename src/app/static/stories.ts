@@ -80,9 +80,9 @@ export class Stories {
             ]
         ),
         // 4. A Encruzilhada das Almas — história com decisões (1 decisão → 3 finais)
-        new Story(4, "A Encruzilhada das Almas", "fable",
+        new Story(4, "A Encruzilhada das Almas", "onyx",
             [
-                new StoryBlock(1, "A Encruzilhada", "A noite cai sobre a estrada quando vocês alcançam o ponto marcado no mapa: uma encruzilhada envolta em névoa densa. A lua, vermelha como sangue, pendura sobre o céu e lança uma luz enferrujada sobre as pedras antigas que demarcam os três caminhos. À esquerda, a floresta se ergue como um muro de sombras; as árvores sussurram com vozes que não são de vento. À frente, ruínas de pedra escura emergem da névoa — colunas quebradas, arcos sem teto, um silêncio que pesa. À direita, o contorno de uma vila abandonada: telhados inclinados, portas entreabertas, como se algo tivesse partido às pressas. Uma voz ecoa de lugar nenhum: 'Escolham. Cada caminho guarda uma verdade… e um preço.'", "forest", "", 1, false),
+                new StoryBlock(1, "A Encruzilhada", "A jornada começou ao amanhecer, quando vocês deixaram para trás a última aldeia conhecida. A estrada de terra batida serpenteou por vales e colinas durante todo o dia, acompanhada pelo crepitar das folhas secas e pelo canto ocasional dos pássaros. Comerciantes, peregrinos e caçadores cruzaram o caminho, mas nenhum parecia disposto a falar da região à frente — alguns apenas franziam o cenho e seguiam em silêncio. O sol atravessou o céu e começou a descer. A paisagem ficou mais escura, as sombras alongando-se entre as árvores, e um frio úmido começou a pairar no ar. Agora, já à noite, vocês alcançam o ponto marcado no mapa: uma encruzilhada envolta em névoa densa, onde três caminhos se separam. A lua, vermelha como sangue, pende sobre o céu e lança uma luz enferrujada sobre as pedras antigas que demarcam cada trilha. À esquerda, a floresta se ergue como um muro de sombras; as árvores sussurram com vozes que não são de vento. À frente, ruínas de pedra escura emergem da névoa — colunas quebradas, arcos sem teto, um silêncio que pesa. À direita, o contorno de uma vila abandonada: telhados inclinados, portas entreabertas, como se algo tivesse partido às pressas. Uma voz ecoa de lugar nenhum: 'Escolham. Cada caminho guarda uma verdade… e um preço.'", "forest", "", 1, false),
                 new StoryBlock(2, "Qual caminho seguir?", "Três caminhos se abrem diante de vocês. A floresta sussurra segredos antigos. As ruínas guardam conhecimento morto. A vila esconde o que restou dos que fugiram. Cada escolha levará a um destino diferente.", "forest", "", 1, false, "decision", [
                     { label: "Floresta Sombria", targetStoryId: 101 },
                     { label: "Ruínas Antigas", targetStoryId: 102 },
@@ -91,7 +91,7 @@ export class Stories {
             ]
         ),
         // 101. O Caminho da Floresta (substory)
-        new Story(101, "O Caminho da Floresta", "fable",
+        new Story(101, "O Caminho da Floresta", "onyx",
             [
                 new StoryBlock(1, "Entrando na Floresta", "Vocês seguem pela esquerda. O ar fica pesado assim que as árvores os engolem. Galhos retorcidos se entrelaçam acima como mãos ossudas. O chão está coberto de folhas mortas que parecem sussurrar sob os pés. Algo observa de entre os troncos — olhos que brilham e somem. A floresta está viva, e não está contente com a visita.", "forest", "woods", 1, false),
                 new StoryBlock(2, "Encontro 1", "A trilha se fecha. Raízes surgem do chão como tentáculos. Das copas, criaturas com casca de árvore e olhos de musgo descem. Elas não falam. Apenas atacam, como se defendendo um território sagrado — ou profanado.", "forest", "woods", 1, false),
@@ -110,7 +110,7 @@ export class Stories {
             true
         ),
         // 102. O Caminho das Ruínas (substory)
-        new Story(102, "O Caminho das Ruínas", "fable",
+        new Story(102, "O Caminho das Ruínas", "onyx",
             [
                 new StoryBlock(1, "Entrando nas Ruínas", "O caminho central os leva às ruínas. Pedra escura, colunas quebradas, arcos sem teto. O ar é frio e seco. Inscrições em línguas mortas cobrem as paredes. Este lugar era um templo — ou uma prisão. Agora é um túmulo que respira.", "tower", "ruins", 1, false),
                 new StoryBlock(2, "Encontro 1", "Guardas de pedra — ou o que restou deles — se movem nas sombras. Golem antigos, corrompidos pelo tempo. Eles não perguntam. Não pensam. Apenas cumprem a última ordem: matar intrusos.", "tower", "ruins", 1, false),
@@ -129,9 +129,9 @@ export class Stories {
             true
         ),
         // 103. O Caminho da Vila (substory)
-        new Story(103, "O Caminho da Vila", "fable",
+        new Story(103, "O Caminho da Vila", "onyx",
             [
-                new StoryBlock(1, "Entrando na Vila", "O caminho à direita leva à vila abandonada. Casas com portas entreabertas. Janelas quebradas. Roupas penduradas em cordas, secando sob um sol que não aquece. Ninguém responde quando vocês chamam. Mas algo se move entre as sombras. A vila não está vazia.", "village", "ruins", 1, false),
+                new StoryBlock(1, "Entrando na Vila", "O caminho à direita leva à vila abandonada. Casas com portas entreabertas. Janelas quebradas. Roupas penduradas em cordas. O ambiente gera uma sensação de desconforto e ninguém responde quando vocês chamam. Mas algo se move entre as sombras. A vila não está vazia.", "village", "ruins", 1, false),
                 new StoryBlock(2, "Encontro 1", "Figuras surgem das casas. Não são vivas. Não estão mortas. São algo no meio — fantasmas presos, repetindo os últimos momentos antes da maldição. Eles atacam sem entender. Sem escolha.", "village", "undead", 1, false),
                 new StoryBlock(3, "Ponto de Descanso", "A praça central tem um poço seco. Um banco de madeira. Por um momento, parece um lugar normal. Até vocês verem as marcas nas paredes. Símbolos de um pacto. Algo fez um acordo nesta vila. E todos pagaram.", "village", "", 2, false),
                 new StoryBlock(4, "Encontro 2", "A igreja local está quebrada. Cruzes invertidas. O altar manchado. E nos bancos, figuras sentadas — esperando um sermão que nunca virá. Quando vocês entram, elas se levantam. O Senhor das Trevas não precisa de fiéis vivos. Apenas de servos.", "village", "undead", 2, false),
@@ -148,75 +148,75 @@ export class Stories {
             true
         ),
         // 111-141: Floresta substories
-        new Story(111, "O Preço do Ataque", "fable", [
+        new Story(111, "O Preço do Ataque", "onyx", [
             new StoryBlock(1, "A Fúria Desperta", "As lâminas cortam as raízes. A floresta grita. O espírito desperta em fúria — mas ferido. A corrupção não o protegeu. A batalha começa.", "forest", "", 5, false),
             new StoryBlock(2, "O Santuário", "A câmara treme. As raízes se retraem. O caminho até o santuário interno — o coração da árvore — se abre. O Espírito os aguarda.", "forest", "", 5, false),
             new StoryBlock(3, "Ato Final", "O Espírito da Floresta Corrompida desce da árvore. Seu corpo é uma fusão de raízes, galhos e sombras. Mas as feridas nas raízes o enfraqueceram. A floresta inteira grita através dele. Vocês são os próximos na lista — mas desta vez, a vantagem é de vocês.", "forest", "undead", 5, true, undefined, undefined, 9, -5),
             new StoryBlock(4, "O Silêncio da Floresta", "O espírito se desfaz em folhas e cinzas. A floresta para de sussurrar. O verde escuro dá lugar a um verde mais suave. Pelas frestas das copas, a luz do dia finalmente entra. Vocês enfrentaram o mal de frente. A encruzilhada os ensinou: às vezes, a coragem direta é a única resposta.", "forest", "", 5, false)
         ], true),
-        new Story(121, "O Preço do Sangue", "fable", [
+        new Story(121, "O Preço do Sangue", "onyx", [
             new StoryBlock(1, "O Pacto Selado", "O sangue cai na tigela. A tigela bebe. O espírito se fortalece — alimentado por vocês. Ele ri. A floresta treme. Vocês não são mais visitantes. São presas.", "forest", "", 5, false),
             new StoryBlock(2, "O Santuário", "A câmara treme. O espírito cresce. O caminho até o santuário interno se abre — mas agora é uma armadilha. Ele os aguarda.", "forest", "", 5, false),
             new StoryBlock(3, "Ato Final", "O Espírito da Floresta Corrompida desce da árvore. O sangue na tigela o transformou. Mais forte. Mais voraz. A floresta inteira grita através dele. Vocês alimentaram o que deveriam ter destruído. Agora ele vem cobrar o resto.", "forest", "undead", 5, true, undefined, undefined, 9, 5),
             new StoryBlock(4, "Raízes e Sombras", "Alguns de vocês sobrevivem. Outros... a floresta os absorve. Quando finalmente derrotam o espírito, já é tarde. A encruzilhada os ensinou: pactos com a corrupção sempre cobram juros.", "forest", "", 5, false)
         ], true),
-        new Story(131, "O Preço da Água", "fable", [
+        new Story(131, "O Preço da Água", "onyx", [
             new StoryBlock(1, "A Água Sagrada", "A água da nascente cai sobre a muda. A planta ressecada se ergue. Um brilho verde — puro, não doentio — irradia. O espírito grita de dor. A água sagrada corrói sua ligação com a árvore. Ele está enfraquecido.", "forest", "", 5, false),
             new StoryBlock(2, "O Santuário", "A câmara treme. A muda brilha. O caminho até o santuário interno se abre. O espírito enfraquecido os aguarda.", "forest", "", 5, false),
             new StoryBlock(3, "Ato Final", "O Espírito da Floresta Corrompida desce da árvore. Mas a água sagrada já fez seu trabalho. Suas raízes fumegam. Ele vacila. A floresta ainda grita através dele, mas a voz está mais fraca. Vocês têm uma chance.", "forest", "undead", 5, true, undefined, undefined, 9, -5),
             new StoryBlock(4, "O Silêncio da Floresta", "O espírito se desfaz em folhas e cinzas. A muda, agora verde e viva, permanece. Um gesto aparentemente inútil salvou a todos. A encruzilhada os ensinou: a compaixão também pode ser uma arma.", "forest", "", 5, false)
         ], true),
-        new Story(141, "O Preço do Nome", "fable", [
+        new Story(141, "O Preço do Nome", "onyx", [
             new StoryBlock(1, "O Nome Verdadeiro", "O diário revela um nome. Um nome que o druida escreveu antes de morrer. Um nome que o espírito temia. Vocês o sussurram. O espírito grita. Nomes têm poder. Ele se retorce, enfraquecido.", "forest", "", 5, false),
             new StoryBlock(2, "O Santuário", "A câmara treme. O nome ecoa. O caminho até o santuário interno se abre. O espírito vacilante os aguarda.", "forest", "", 5, false),
             new StoryBlock(3, "Ato Final", "O Espírito da Floresta Corrompida desce da árvore. Mas o nome ecoa em sua mente. Ele vacila a cada sílaba que vocês repetem. A floresta ainda grita através dele, mas o controle dele sobre ela está rachado. O conhecimento do druida morto os salvou.", "forest", "undead", 5, true, undefined, undefined, 9, -5),
             new StoryBlock(4, "O Silêncio da Floresta", "O espírito se desfaz em folhas e cinzas. O diário do druida repousa no chão — sua última contribuição à floresta. A encruzilhada os ensinou: a curiosidade, quando guiada pelo propósito, pode vencer até a corrupção.", "forest", "", 5, false)
         ], true),
         // 112-142: Ruínas substories
-        new Story(112, "O Preço da Recusa", "fable", [
+        new Story(112, "O Preço da Recusa", "onyx", [
             new StoryBlock(1, "O Confronto", "Vocês atacam. O Lich não esperava. Seu cajado sobe. Os espectros das colunas ganham forma. Mas ele está despreparado. A batalha começa.", "cave", "", 5, false),
             new StoryBlock(2, "O Salão", "O salão se abre. As colunas de ossos tremem. O Lich desce do trono. A batalha pelo conhecimento — e pela própria alma — começa.", "cave", "", 5, false),
             new StoryBlock(3, "Ato Final", "O Lich das Colunas desce do trono. Seu manto é feito de sombras e gemidos. Ele não quer matar. Quer converter. Mas vocês não deram a ele tempo. A batalha pelo conhecimento — e pela própria alma — começa em condições iguais.", "cave", "undead", 5, true, undefined, undefined, 16, -5),
             new StoryBlock(4, "O Conhecimento Morto", "O Lich cai em pó e ossos. As colunas desmoronam. Vocês recusaram o caminho fácil. A encruzilhada os ensinou: algumas ofertas não valem o preço.", "tower", "", 5, false)
         ], true),
-        new Story(122, "O Preço do Conhecimento", "fable", [
+        new Story(122, "O Preço do Conhecimento", "onyx", [
             new StoryBlock(1, "O Pacto", "Vocês aceitam. O conhecimento flui. E com ele, uma presença. O Lich sorri. Uma alma entre vocês se dobra. O Lich se fortalece. O preço do conhecimento foi pago.", "cave", "", 5, false),
             new StoryBlock(2, "O Salão", "O salão se abre. O Lich cresce. As almas das colunas gemem. Ele os aguarda — fortalecido pelo pacto.", "cave", "", 5, false),
             new StoryBlock(3, "Ato Final", "O Lich das Colunas desce do trono. Alimentado pela alma que tomou. Mais forte. Mais insaciável. O conhecimento que ele ofereceu era uma armadilha. Agora ele vem cobrar o resto.", "cave", "undead", 5, true, undefined, undefined, 16, 5),
             new StoryBlock(4, "O Peso da Escolha", "Alguns de vocês sobrevivem. Outros... o Lich os adiciona às colunas. Quando finalmente o derrotam, o conhecimento que ganharam não vale o que perderam. A encruzilhada os ensinou: nem todo conhecimento merece ser possuído.", "tower", "", 5, false)
         ], true),
-        new Story(132, "O Preço do Nome", "fable", [
+        new Story(132, "O Preço do Nome", "onyx", [
             new StoryBlock(1, "O Nome Esquecido", "'Qual era o seu nome em vida?' O Lich para. Os crânios do trono sussurram. Um nome. Um nome que ele odiava. Um nome que o enfraquece. Ele grita. Nomes têm poder sobre os mortos.", "cave", "", 5, false),
             new StoryBlock(2, "O Salão", "O salão se abre. O nome ainda ecoa. O Lich vacila no trono. O momento de atacar é agora.", "cave", "", 5, false),
             new StoryBlock(3, "Ato Final", "O Lich das Colunas desce do trono. Mas o nome ecoa. Ele vacila. Os crânios que o sustentam tremem. Uma pergunta aparentemente inocente mudou tudo. A batalha começa — e o Lich está em desvantagem.", "cave", "undead", 5, true, undefined, undefined, 16, -5),
             new StoryBlock(4, "O Conhecimento Morto", "O Lich cai em pó e ossos. O nome que ele tanto odiava foi sua ruína. A encruzilhada os ensinou: até os imortais têm pontos fracos.", "tower", "", 5, false)
         ], true),
-        new Story(142, "O Preço do Trono", "fable", [
+        new Story(142, "O Preço do Trono", "onyx", [
             new StoryBlock(1, "As Almas Despertas", "As mãos tocam o trono. Os crânios gritam. Almas presas há eras despertam. Não para atacar vocês — para atacar o Lich. Ele as traiu. Agora elas se vingam. O Lich grita de surpresa e dor.", "cave", "", 5, false),
             new StoryBlock(2, "O Salão", "O salão se abre. As almas do trono se levantam. O Lich está cercado. A batalha começa — e vocês não estão sozinhos.", "cave", "", 5, false),
             new StoryBlock(3, "Ato Final", "O Lich das Colunas desce do trono. Mas as almas do trono o cercam. Elas o enfraquecem. Vocês não estão sozinhos. Um gesto imprudente revelou-se a chave. A batalha começa — e as almas estão do lado de vocês.", "cave", "undead", 5, true, undefined, undefined, 16, -5),
             new StoryBlock(4, "O Conhecimento Morto", "O Lich cai em pó e ossos. As almas do trono suspiram — e se libertam. Um por um, elas desaparecem em paz. A encruzilhada os ensinou: às vezes, a loucura é a única sanidade.", "tower", "", 5, false)
         ], true),
         // 113-143: Vila substories
-        new Story(113, "O Preço da Recusa", "fable", [
+        new Story(113, "O Preço da Recusa", "onyx", [
             new StoryBlock(1, "O Confronto", "Vocês recusam. Avançam. O Senhor das Trevas ri. As velas tremem. As sombras ganham forma. Mas vocês não aceitaram nada dele. A batalha começa em pé de igualdade.", "mansion", "", 5, false),
             new StoryBlock(2, "O Salão", "O altar se abre. O Senhor das Trevas se levanta do trono. As sombras ganham forma. A batalha pelo que restou da vila é inevitável.", "mansion", "", 5, false),
             new StoryBlock(3, "Ato Final", "O Senhor das Trevas desce do trono. A luz diminui. As sombras se estendem. Ele não é um monstro — é a consequência. Mas vocês escolheram lutar. A batalha pelo que restou da vila começa.", "mansion", "undead", 5, true, undefined, undefined, 7, -5),
             new StoryBlock(4, "O Amanhecer na Vila", "O Senhor das Trevas se dissipa em fumaça. As velas negras se apagam. A encruzilhada os ensinou: recusar o mal é o primeiro passo para vencê-lo.", "village", "", 5, false)
         ], true),
-        new Story(123, "O Preço da Vela", "fable", [
+        new Story(123, "O Preço da Vela", "onyx", [
             new StoryBlock(1, "O Pacto", "A mão aceita a vela negra. O fogo queima — não a mão, a alma. O Senhor sorri. Vocês são dele agora. Um de vocês. Ou todos. A vela os conecta. Ele se fortalece.", "mansion", "", 5, false),
             new StoryBlock(2, "O Salão", "O altar pulsa. O Senhor das Trevas cresce. As almas da vila gemem. Ele os aguarda — fortalecido pelo pacto.", "mansion", "", 5, false),
             new StoryBlock(3, "Ato Final", "O Senhor das Trevas desce do trono. Alimentado pelo pacto. Mais forte. As almas da vila gritam. Vocês o fortaleceram. Agora ele vem cobrar.", "mansion", "undead", 5, true, undefined, undefined, 7, 5),
             new StoryBlock(4, "O Crepúsculo da Vila", "Alguns sobrevivem. Outros... o Senhor os adiciona à coleção. A vila não descansa. A encruzilhada os ensinou: aceitar o mal é o primeiro passo para se tornar parte dele.", "village", "", 5, false)
         ], true),
-        new Story(133, "O Preço da Vela Branca", "fable", [
+        new Story(133, "O Preço da Vela Branca", "onyx", [
             new StoryBlock(1, "A Relíquia", "A mão pega a vela branca. Ela acende. Não com fogo negro — com luz. Uma relíquia sagrada, esquecida. O Senhor grita. A luz o queima. Ele está enfraquecido.", "mansion", "", 5, false),
             new StoryBlock(2, "O Salão", "O altar treme. A vela branca brilha. O Senhor recua. As sombras se dissipam. O momento de atacar é agora.", "mansion", "", 5, false),
             new StoryBlock(3, "Ato Final", "O Senhor das Trevas desce do trono. Mas a vela branca brilha. A luz protege vocês. As sombras recuam. Um objeto aparentemente inútil revelou-se a chave. A batalha começa — e vocês têm proteção.", "mansion", "undead", 5, true, undefined, undefined, 7, -5),
             new StoryBlock(4, "O Amanhecer na Vila", "O Senhor das Trevas se dissipa em fumaça. A vela branca se apaga — sua missão cumprida. A encruzilhada os ensinou: o que parece sem valor pode ser a salvação.", "village", "", 5, false)
         ], true),
-        new Story(143, "O Preço da Luz", "fable", [
+        new Story(143, "O Preço da Luz", "onyx", [
             new StoryBlock(1, "O Caos", "As mãos apagam todas as velas. A escuridão é total. O Senhor grita. Não de triunfo — de dor. As velas o conectavam às almas da vila. Sem elas, ele está nu. Enfraquecido.", "mansion", "", 5, false),
             new StoryBlock(2, "O Salão", "O altar está em escuridão. As almas libertas gritam. O Senhor está sozinho. Sem as velas, sem as almas que o sustentavam. A batalha começa.", "mansion", "", 5, false),
             new StoryBlock(3, "Ato Final", "O Senhor das Trevas desce do trono. Mas as almas da vila já não estão presas. Elas o atacam. Um gesto destrutivo libertou as almas. Vocês cortaram o vínculo dele. A batalha começa — e o Senhor está sozinho.", "mansion", "undead", 5, true, undefined, undefined, 7, -5),
