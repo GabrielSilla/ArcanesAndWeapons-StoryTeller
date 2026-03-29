@@ -1,0 +1,1 @@
+const fs = require('fs');\nconst pdf = require('pdf-parse');\n\nlet dataBuffer = fs.readFileSync('Regras.pdf');\n\npdf(dataBuffer).then(function(data) {\n    console.log(data.text);\n});

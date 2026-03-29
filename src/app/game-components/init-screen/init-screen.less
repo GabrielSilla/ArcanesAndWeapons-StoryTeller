@@ -12,9 +12,10 @@
 .init-screen-image {
     z-index: 1000;
     opacity: 0;
-    position: absolute;
-    justify-self: center;
-    align-self: anchor-center;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .fade-in {
@@ -43,6 +44,5 @@
 @media screen and (min-width: 650px) {
     .init-screen-image {
         width: 500px;
-        justify-self: anchor-center;
     }
 }
