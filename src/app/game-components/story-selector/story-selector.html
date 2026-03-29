@@ -1,7 +1,7 @@
 <div *ngIf="show" class="story-screen-overlay">
 </div>
 
-<ion-card class="story-selector" *ngIf="show && stories().stories.length > 0">
+<ion-card class="story-selector" *ngIf="show && stories().selectableStories.length > 0">
   <ion-card-header>
     <ion-card-title>Selecione a História</ion-card-title>
   </ion-card-header>
@@ -9,7 +9,7 @@
   <div class="story-item-content">
         <ion-item>
             <ion-select label="História" placeholder="" (ionChange)="handleStory($event)">
-              <ion-select-option *ngFor="let story of stories().stories" [value]="story.id">{{story.name}}</ion-select-option>
+              <ion-select-option *ngFor="let story of stories().selectableStories" [value]="story.id">{{story.name}}</ion-select-option>
             </ion-select>
         </ion-item>
   </div>

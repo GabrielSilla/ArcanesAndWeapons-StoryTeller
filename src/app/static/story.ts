@@ -5,11 +5,13 @@ export class Story {
     name: string;
     voice: string;
     blocks: StoryBlock[];
+    isSubStory: boolean;
 
-    constructor(id: number, name: string, voice: string, blocks:  StoryBlock[]) {
+    constructor(id: number, name: string, voice: string, blocks: StoryBlock[], isSubStory?: boolean) {
         this.id = id;
         this.name = name;
         this.voice = voice;
         this.blocks = blocks;
+        this.isSubStory = isSubStory ?? false;
     }
 }

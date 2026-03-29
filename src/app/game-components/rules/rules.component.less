@@ -1,0 +1,127 @@
+.story-screen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9998;
+}
+
+.rules-card {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    max-height: 85vh;
+    z-index: 9999;
+    font-family: "MedievalSharpBook";
+
+    --background: rgba(35, 35, 35, 0.95);
+    --color: #f7d7a8;
+    --button-color: #f7d7a8;
+    --button-background: transparent;
+
+    --border-radius: 20px;
+
+    ion-card-title {
+        --color: #f7d7a8;
+        font-size: 18px;
+    }
+}
+
+.rules-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 48px 12px 16px;
+    --background: rgba(72, 72, 72, 0.95);
+    position: relative;
+    width: 100%;
+    overflow: visible;
+
+    .rules-title {
+        flex: 1;
+        margin: 0;
+        min-width: 0;
+    }
+
+    .rules-close-btn {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        margin: 0;
+        --padding-start: 0;
+        --padding-end: 0;
+        flex-shrink: 0;
+    }
+}
+
+.rules-content {
+    padding: 12px 16px 20px;
+    max-height: calc(85vh - 80px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.rules-sections {
+    padding-bottom: 20px;
+}
+
+.rule-section {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(247, 215, 168, 0.2);
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.rule-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.rule-icon {
+    font-size: 24px;
+    color: #f7d7a8;
+    flex-shrink: 0;
+}
+
+.rule-title {
+    font-family: "MedievalSharpBook";
+    font-size: 16px;
+    font-weight: 600;
+    color: #f7d7a8;
+    margin: 0;
+}
+
+.rule-section-body {
+    padding-left: 34px;
+}
+
+.rule-paragraph {
+    font-family: "MedievalSharpBook";
+    font-size: 13px;
+    line-height: 1.5;
+    color: #f7d7a8;
+    margin: 0 0 8px 0;
+    opacity: 0.95;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+@media screen and (min-width: 650px) {
+    .rules-card {
+        width: 500px;
+    }
+}

@@ -1,0 +1,24 @@
+<div *ngIf="show" class="story-screen-overlay"></div>
+
+<ion-card class="rules-card" *ngIf="show">
+  <ion-card-header class="rules-header">
+    <ion-card-title class="rules-title">Regras do Jogo</ion-card-title>
+    <ion-button fill="clear" size="small" (click)="close()" class="rules-close-btn">
+      <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
+    </ion-button>
+  </ion-card-header>
+
+  <div class="rules-content">
+    <div class="rules-sections">
+      <section *ngFor="let section of ruleSections" class="rule-section">
+        <div class="rule-section-header">
+          <ion-icon [name]="section.icon" class="rule-icon"></ion-icon>
+          <h2 class="rule-title">{{ section.title }}</h2>
+        </div>
+        <div class="rule-section-body">
+          <p *ngFor="let paragraph of section.content" class="rule-paragraph">{{ paragraph }}</p>
+        </div>
+      </section>
+    </div>
+  </div>
+</ion-card>
