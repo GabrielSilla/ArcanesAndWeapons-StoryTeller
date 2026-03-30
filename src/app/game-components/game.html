@@ -55,6 +55,17 @@
             <div class="rules-btn-row">
                 <ion-icon id="rules-btn" name="information-circle-outline" (click)="openRules()"></ion-icon>
             </div>
+            <div class="narrator-toggle-row">
+                <ion-label
+                    class="narrator-toggle-label"
+                    (click)="toggleNarrator()"
+                >Narrador</ion-label>
+                <ion-toggle
+                    [checked]="narratorEnabled()"
+                    (ionChange)="onNarratorChange($event)"
+                    aria-label="Ativar ou desativar o narrador da história"
+                ></ion-toggle>
+            </div>
         </div>
     </div>
     <div *ngIf="dice() == 0 && selectedCard() == '' && hasStorySelected()" class="left-top-view story-moment-view">

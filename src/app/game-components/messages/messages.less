@@ -14,19 +14,45 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    margin: 0;
     color: #f7d7a8;
-    font-size: 25px;
     font-family: "MedievalSharpBook";
     text-align: center;
     z-index: 1000;
 }
 
-.ft-25 {
-    font-size: 25px; 
+// Narrativa da história (size 15): ~90% da tela, centrada; scroll se o texto for muito longo
+.message.ft-15 {
+    width: 90%;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+        max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    font-size: clamp(15px, 2.8vw, 18px);
+    -webkit-overflow-scrolling: touch;
+
+    ion-label {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-wrap: break-word;
+        line-height: 1.45;
+    }
 }
 
-.ft-15 {
-    font-size: 18px; 
-    margin-right: 100px;
-    margin-left: 100px;
+// Mensagens curtas (toasts, size 25)
+.message.ft-25 {
+    width: auto;
+    max-width: min(92vw, 480px);
+    padding: 12px 20px;
+    font-size: 25px;
+}
+
+.ft-25 {
+    font-size: 25px;
 }

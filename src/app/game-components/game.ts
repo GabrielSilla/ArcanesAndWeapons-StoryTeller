@@ -7,7 +7,6 @@ import { ModalController } from '@ionic/angular';
 import { Messages } from './messages/messages';
 import { StorySelector } from './story-selector/story-selector';
 import { RulesComponent } from './rules/rules.component';
-import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { MusicService } from '../services/music.service';
 import { CardModel } from '../static/card-model';
 import { DecisionOption } from '../static/story-block';
@@ -24,9 +23,41 @@ export class Game {
     musicService: MusicService;
     ttsService: TtsService;
 
+    /** Preferência do narrador (TTS); persistida em localStorage */
+    narratorEnabled = signal(true);
+
+    private static readonly NARRATOR_STORAGE_KEY = 'aa-story-narrator-enabled';
+
     constructor(musicService: MusicService, ttsService: TtsService) {
         this.musicService = musicService;
         this.ttsService = ttsService;
+        try {
+            const v = localStorage.getItem(Game.NARRATOR_STORAGE_KEY);
+            if (v !== null) {
+                this.narratorEnabled.set(v === 'true');
+            }
+        } catch {
+            /* modo privado / indisponível */
+        }
+    }
+
+    onNarratorChange(ev: Event) {
+        const checked = (ev as CustomEvent<{ checked: boolean }>).detail.checked;
+        this.setNarratorEnabled(checked);
+    }
+
+    /** Alterna o narrador (clique na label "Narrador") */
+    toggleNarrator() {
+        this.setNarratorEnabled(!this.narratorEnabled());
+    }
+
+    private setNarratorEnabled(checked: boolean) {
+        this.narratorEnabled.set(checked);
+        try {
+            localStorage.setItem(Game.NARRATOR_STORAGE_KEY, String(checked));
+        } catch {
+            /* ignore */
+        }
     }
 
     @Output() bgChange = new EventEmitter<string>();    
@@ -280,6 +311,9 @@ export class Game {
     }
 
     async speak(text: string) {
+        if (!this.narratorEnabled()) {
+            return;
+        }
         console.log(this.selectedStory().id, this.storyBlock().id);
         await this.ttsService.speak(text, this.selectedStory().id, this.storyBlock().id, this.selectedStory().voice);
     }
