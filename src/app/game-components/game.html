@@ -92,8 +92,13 @@
         <ion-label color="primary">{{getStoryStatusMessage()}}</ion-label>
     </div>
 
-    <div *ngIf="dice() == 0 && selectedCard() == ''" class="right-bottom-view">
-        <div *ngFor="let card of monsterSelectedCards(); let i = index;" class="card" [class]="card.isDying ? 'dying' : ''">
+    <div
+        *ngIf="dice() == 0 && selectedCard() == ''"
+        class="right-bottom-view"
+        [class.many-monsters]="monsterSelectedCards().length >= 6"
+        [style.--monster-count]="monsterSelectedCards().length"
+    >
+        <div *ngFor="let card of monsterSelectedCards(); let i = index;" class="card" [class.dying]="card.isDying" [class.monster-revived-flash]="card.reviveFlash">
             <ion-img [src]="card.source" (click)="monsterCardView(card.source)"></ion-img>
 
             <div class="monster-stats">
@@ -110,7 +115,7 @@
                 <ion-button size="small" class="plus" fill="outline" shape="round" (click)="addMonsterHealth(i)">
                     <ion-icon slot="icon-only" name="add-circle"></ion-icon>
                 </ion-button>
-                <ion-button size="small" class="minus"  fill="outline" shape="round" (click)="removeMonsterHealth(i)">
+                <ion-button size="small" class="minus" fill="outline" shape="round" [disabled]="card.hp <= 0 || card.isDying" (click)="removeMonsterHealth(i)">
                     <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
                 </ion-button>
             </div>

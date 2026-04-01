@@ -17,6 +17,11 @@ import { MusicService } from '../services/music.service';
 import { CardModel } from '../static/card-model';
 import { DecisionOption } from '../static/story-block';
 import { TtsService } from '../services/tts.service';
+import { getSummonsForMonster } from '../static/monster-summons';
+
+const BOSS_ARAUTO_DO_FIM_ID = 10002;
+const ARAUTO_REVIVE_ATTACK_BONUS = 5;
+const REVIVE_FLASH_MS = 850;
 
 @Component({
   selector: 'app-game',
@@ -220,11 +225,42 @@ export class Game {
         } else {
             const deck = this.cards.bosses;
             const forcedBossId = this.storyBlock().bossId;
-            this.pickAMonster(deck, forcedBossId);
+            this.pickAMonster(deck, forcedBossId, { applySummons: true });
         }
     }
 
-    pickAMonster(deck: CardModel[], forcedId?: number) {
+    /** HP do encontro atual (nível × dificuldade + modificador de boss do bloco). */
+    private cloneMonsterWithEncounterHp(baseCard: CardModel): CardModel {
+        const hpModifier = this.storyBlock().bossHpModifier ?? 0;
+        const level = this.storyBlock().level;
+        const hpPerLevel = hpPerLevelFor(this.difficultyId());
+        return {
+            ...baseCard,
+            hp: baseCard.hp + hpPerLevel * level + hpModifier
+        };
+    }
+
+    /**
+     * Invoca monstro por id (efeitos especiais). Recursivo se o invocado também tiver invocações.
+     * Só deve ser chamado em encontros comuns (não chefes).
+     */
+    private spawnMonsterById(summonId: number) {
+        const template = this.cards.getCardTemplateById(summonId);
+        if (!template) return;
+
+        const selectedCard = this.cloneMonsterWithEncounterHp(template);
+        this.monsterSelectedCards.update((list) => [...list, selectedCard]);
+
+        for (const nestedId of getSummonsForMonster(summonId)) {
+            this.spawnMonsterById(nestedId);
+        }
+    }
+
+    pickAMonster(
+        deck: CardModel[],
+        forcedId?: number,
+        opts?: { applySummons?: boolean }
+    ) {
         const firstId = deck[0].id;
         let selectedId = forcedId ?? (Math.floor(Math.random() * deck.length) + firstId);
 
@@ -235,19 +271,16 @@ export class Game {
         }
         if (!baseCard) return;
 
-        // 🔑 CLONE — HP do nível do bloco × multiplicador de dificuldade
-        const hpModifier = this.storyBlock().bossHpModifier ?? 0;
-        const level = this.storyBlock().level;
-        const hpPerLevel = hpPerLevelFor(this.difficultyId());
-        const selectedCard: CardModel = {
-            ...baseCard,
-            hp: baseCard.hp + hpPerLevel * level + hpModifier
-        };
+        const selectedCard = this.cloneMonsterWithEncounterHp(baseCard);
 
-        this.monsterSelectedCards.update(list => [
-            ...list,
-            selectedCard
-        ]);
+        this.monsterSelectedCards.update((list) => [...list, selectedCard]);
+
+        const applySummons = opts?.applySummons !== false;
+        if (applySummons) {
+            for (const summonId of getSummonsForMonster(baseCard.id)) {
+                this.spawnMonsterById(summonId);
+            }
+        }
     }
 
     openModal() {
@@ -385,12 +418,45 @@ export class Game {
             const monster = copy[index];
 
             if (!monster) return copy;
+            if (monster.hp <= 0 || monster.isDying) return copy;
 
             const newHp = monster.hp - 1;
 
             if (newHp == 0) {
-                shouldRemove = true;
-                copy[index] = { ...monster, hp: newHp, isDying: true };
+                const canRevive =
+                    monster.id === BOSS_ARAUTO_DO_FIM_ID &&
+                    !monster.bossReviveConsumed;
+
+                if (canRevive) {
+                    const template = this.cards.bosses.find(
+                        (c) => c.id === BOSS_ARAUTO_DO_FIM_ID
+                    );
+                    if (template) {
+                        const revived = this.cloneMonsterWithEncounterHp(template);
+                        copy[index] = {
+                            ...revived,
+                            attack: revived.attack + ARAUTO_REVIVE_ATTACK_BONUS,
+                            bossReviveConsumed: true,
+                            reviveFlash: true,
+                        };
+                        shouldRemove = false;
+                        setTimeout(() => {
+                            this.monsterSelectedCards.update((list) =>
+                                list.map((m: any) =>
+                                    m?.reviveFlash
+                                        ? { ...m, reviveFlash: false }
+                                        : m
+                                )
+                            );
+                        }, REVIVE_FLASH_MS);
+                    } else {
+                        shouldRemove = true;
+                        copy[index] = { ...monster, hp: newHp, isDying: true };
+                    }
+                } else {
+                    shouldRemove = true;
+                    copy[index] = { ...monster, hp: newHp, isDying: true };
+                }
             } else {
                 copy[index] = { ...monster, hp: newHp };
             }

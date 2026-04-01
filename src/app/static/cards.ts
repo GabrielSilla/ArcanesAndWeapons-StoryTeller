@@ -169,22 +169,27 @@ export class Cards {
 
     public allMonsters = [...this.caves, ...this.mountains, ...this.ruins, ...this.undead, ...this.woods];
 
+    /** Template de monstro comum por id (baralhos de encontro). */
+    getCardTemplateById(id: number): CardModel | undefined {
+        return this.allMonsters.find((c) => c.id === id);
+    }
+
     public bosses = [
-        new CardModel(1, "Aranha-Mãe", "/assets/cards/bosses/aranha-mae.png", 20, 6),
-        new CardModel(2, "Arauto do Fim", "/assets/cards/bosses/arauto-do-fim.png", 50, 5),
-        new CardModel(3, "Arqueomante de Ossos", "/assets/cards/bosses/arqueomante-de-ossos.png", 20, 6),
-        new CardModel(4, "Arqueomante Proibido", "/assets/cards/bosses/arqueomante-proibido.png", 15, 8),
-        new CardModel(5, "Cavaleiro Pálido", "/assets/cards/bosses/cavaleiro-palido.png", 15, 7),
-        new CardModel(6, "Colosso de Ferro", "/assets/cards/bosses/colosso-de-ferro.png", 15, 7),
-        new CardModel(7, "Drácula", "/assets/cards/bosses/dracula.png", 20, 6),
-        new CardModel(8, "Flagelo das Almas", "/assets/cards/bosses/flagelo-das-almas.png", 12, 3),
-        new CardModel(9, "Flor Maldita de Ylliria", "/assets/cards/bosses/flor-maldita-ylliria.png", 10, 6),
-        new CardModel(10, "Matriarca das Serpentes", "/assets/cards/bosses/matriarca-serpentes.png", 20, 7),
-        new CardModel(11, "O Abissal", "/assets/cards/bosses/o-abissal.png", 15, 9),
-        new CardModel(12, "O Açougueiro", "/assets/cards/bosses/o-acougueiro.png", 25, 7),
-        new CardModel(13, "Rainha Abissal", "/assets/cards/bosses/rainha-abissal.png", 20, 7),
-        new CardModel(14, "Ulrik", "/assets/cards/bosses/ulrick.png", 10, 9),
-        new CardModel(15, "Voragun", "/assets/cards/bosses/voragun.png", 20, 7),
-        new CardModel(16, "Lich", "/assets/cards/bosses/lich.png", 20, 3)
+        new CardModel(10001, "Aranha-Mãe", "/assets/cards/bosses/aranha-mae.png", 20, 6),
+        new CardModel(10002, "Arauto do Fim", "/assets/cards/bosses/arauto-do-fim.png", 50, 5),
+        new CardModel(10003, "Arqueomante de Ossos", "/assets/cards/bosses/arqueomante-de-ossos.png", 20, 6),
+        new CardModel(10004, "Arqueomante Proibido", "/assets/cards/bosses/arqueomante-proibido.png", 15, 8),
+        new CardModel(10005, "Cavaleiro Pálido", "/assets/cards/bosses/cavaleiro-palido.png", 15, 7),
+        new CardModel(10006, "Colosso de Ferro", "/assets/cards/bosses/colosso-de-ferro.png", 15, 7),
+        new CardModel(10007, "Drácula", "/assets/cards/bosses/dracula.png", 20, 6),
+        new CardModel(10008, "Flagelo das Almas", "/assets/cards/bosses/flagelo-das-almas.png", 12, 3),
+        new CardModel(10009, "Flor Maldita de Ylliria", "/assets/cards/bosses/flor-maldita-ylliria.png", 10, 6),
+        new CardModel(10010, "Matriarca das Serpentes", "/assets/cards/bosses/matriarca-serpentes.png", 20, 7),
+        new CardModel(10011, "O Abissal", "/assets/cards/bosses/o-abissal.png", 15, 9),
+        new CardModel(10012, "O Açougueiro", "/assets/cards/bosses/o-acougueiro.png", 25, 7),
+        new CardModel(10013, "Rainha Abissal", "/assets/cards/bosses/rainha-abissal.png", 20, 7),
+        new CardModel(10014, "Ulrik", "/assets/cards/bosses/ulrick.png", 10, 9),
+        new CardModel(10015, "Voragun", "/assets/cards/bosses/voragun.png", 20, 7),
+        new CardModel(10016, "Lich", "/assets/cards/bosses/lich.png", 20, 3)
     ];
 }

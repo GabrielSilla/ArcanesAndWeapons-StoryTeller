@@ -168,6 +168,72 @@
         bottom: -80px;
         right: 50px;
     }
+
+    ion-button.minus,
+    ion-button.plus {
+        --ripple-color: transparent;
+    }
+
+    &.many-monsters {
+        flex-wrap: nowrap;
+        align-content: center;
+        justify-content: flex-start;
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+        padding-left: 8px;
+        padding-right: 8px;
+
+        .card {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            width: min(179px, calc((100vw - 48px) / var(--monster-count, 6)));
+            height: auto;
+            aspect-ratio: 179 / 267;
+            max-height: min(85vh, 267px);
+            margin: 0 4px;
+            align-self: center;
+
+            ion-img {
+                flex: 1 1 auto;
+                width: 100%;
+                min-height: 0;
+                object-fit: contain;
+            }
+        }
+
+        .monster-stats {
+            .monster-hp-view,
+            .monster-attack-view {
+                margin: 4px 6px;
+            }
+
+            .health-icon,
+            .attack-icon {
+                width: 14px;
+                height: 14px;
+            }
+
+            ion-label.info {
+                font-size: 13px;
+            }
+        }
+
+        .minus {
+            bottom: -44px;
+            left: 28px;
+            transform: scale(0.85);
+            transform-origin: center top;
+        }
+
+        .plus {
+            bottom: -44px;
+            right: 28px;
+            transform: scale(0.85);
+            transform-origin: center top;
+        }
+    }
 }
 
 ion-icon {
@@ -523,10 +589,6 @@ ion-icon {
     }
 }
 
-.card {
-  will-change: transform, opacity;
-}
-
 @keyframes die {
   0% {
     opacity: 1;
@@ -540,7 +602,31 @@ ion-icon {
 }
 
 .card.dying {
+  will-change: transform, opacity;
   animation: die 300ms ease-in forwards;
+  pointer-events: none;
+}
+
+@keyframes monster-revived-flash {
+  0% {
+    filter: brightness(1);
+    transform: scale(1);
+    box-shadow: 0 0 0 transparent;
+  }
+  45% {
+    filter: brightness(1.35) saturate(1.12);
+    transform: scale(1.06);
+    box-shadow: 0 0 20px rgba(56, 128, 255, 0.45);
+  }
+  100% {
+    filter: brightness(1);
+    transform: scale(1);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+.card.monster-revived-flash {
+  animation: monster-revived-flash 0.85s ease-out 1;
   pointer-events: none;
 }
 
@@ -576,11 +662,15 @@ ion-icon {
 }
 
 @media screen and (max-width: 650px) {
-    .right-bottom-view {
+    .right-bottom-view:not(.many-monsters) {
         .card {
             width: 100px;
             margin: 0 2px 0 2px;
         }
+    }
+
+    .right-bottom-view.many-monsters .card {
+        width: min(179px, calc((100vw - 24px) / var(--monster-count, 6)));
     }
 
     .magic-card {
@@ -595,10 +685,15 @@ ion-icon {
 }
 
 @media screen and (min-width: 1270px) {
-    .right-bottom-view {
+    .right-bottom-view:not(.many-monsters) {
         .card {
             width: 229px;
             height: 350px;
         }
+    }
+
+    .right-bottom-view.many-monsters .card {
+        width: min(229px, calc((100vw - 64px) / var(--monster-count, 6)));
+        max-height: min(85vh, 350px);
     }
 }
