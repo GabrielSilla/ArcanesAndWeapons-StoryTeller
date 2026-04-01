@@ -1,0 +1,29 @@
+<div *ngIf="show" class="story-screen-overlay"></div>
+
+<ion-card class="difficulty-selector" *ngIf="show">
+  <ion-card-header>
+    <ion-card-title>Dificuldade</ion-card-title>
+    <p class="difficulty-intro">Quanto mais alto, mais pontos de vida os monstros ganham por nível do encontro.</p>
+  </ion-card-header>
+
+  <div class="difficulty-item-content">
+    <ion-radio-group [value]="selectedId" (ionChange)="onGroupChange($event)">
+      <ion-item *ngFor="let opt of options" lines="full">
+        <ion-label class="difficulty-option-label">
+          <span class="difficulty-option-title">{{ opt.label }}</span>
+          <span class="difficulty-option-desc">{{ opt.description }}</span>
+        </ion-label>
+        <ion-radio slot="end" [value]="opt.id"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
+  </div>
+
+  <div class="difficulty-item-close">
+    <ion-button shape="round" size="small" fill="outline" (click)="close()">
+      <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
+    </ion-button>
+    <ion-button shape="round" size="small" fill="outline" (click)="choose()">
+      <ion-icon slot="icon-only" name="checkmark-circle-outline"></ion-icon>
+    </ion-button>
+  </div>
+</ion-card>

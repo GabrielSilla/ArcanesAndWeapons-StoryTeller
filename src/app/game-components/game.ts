@@ -6,7 +6,13 @@ import { Stories } from '../static/stories';
 import { ModalController } from '@ionic/angular';
 import { Messages } from './messages/messages';
 import { StorySelector } from './story-selector/story-selector';
+import { DifficultySelector } from './difficulty-selector/difficulty-selector';
 import { RulesComponent } from './rules/rules.component';
+import {
+    DifficultyId,
+    hpPerLevelFor,
+    isDifficultyId
+} from '../static/difficulty';
 import { MusicService } from '../services/music.service';
 import { CardModel } from '../static/card-model';
 import { DecisionOption } from '../static/story-block';
@@ -15,7 +21,7 @@ import { TtsService } from '../services/tts.service';
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [IonicModule, CommonModule, Messages, StorySelector, RulesComponent],
+  imports: [IonicModule, CommonModule, Messages, StorySelector, DifficultySelector, RulesComponent],
   templateUrl: './game.html',
   styleUrl: './game.less'
 })
@@ -27,6 +33,10 @@ export class Game {
     narratorEnabled = signal(true);
 
     private static readonly NARRATOR_STORAGE_KEY = 'aa-story-narrator-enabled';
+    private static readonly DIFFICULTY_STORAGE_KEY = 'aa-game-difficulty';
+
+    /** Multiplicador de HP por nível do bloco (Fácil 1× … Pesadelo 10×) */
+    difficultyId = signal<DifficultyId>('normal');
 
     constructor(musicService: MusicService, ttsService: TtsService) {
         this.musicService = musicService;
@@ -36,8 +46,21 @@ export class Game {
             if (v !== null) {
                 this.narratorEnabled.set(v === 'true');
             }
+            const d = localStorage.getItem(Game.DIFFICULTY_STORAGE_KEY);
+            if (d !== null && isDifficultyId(d)) {
+                this.difficultyId.set(d);
+            }
         } catch {
             /* modo privado / indisponível */
+        }
+    }
+
+    private setDifficultyId(id: DifficultyId) {
+        this.difficultyId.set(id);
+        try {
+            localStorage.setItem(Game.DIFFICULTY_STORAGE_KEY, id);
+        } catch {
+            /* ignore */
         }
     }
 
@@ -74,6 +97,7 @@ export class Game {
     messageModal = signal("");
     storyTextModal = signal("");
     modalStory = signal(false);
+    modalDifficulty = signal(false);
     modalRules = signal(false);
     modalDecisionOpen = signal(false);
     modalDecisionData = signal<{ narrative: string; title: string; options: DecisionOption[] } | null>(null);
@@ -133,7 +157,17 @@ export class Game {
     }
 
     storySelection() {
-        this.modalStory.set(true);
+        this.modalDifficulty.set(true);
+    }
+
+    onDifficultyReturn(event: { difficultyId: DifficultyId } | void) {
+        if (event && 'difficultyId' in event) {
+            this.setDifficultyId(event.difficultyId);
+            this.modalDifficulty.set(false);
+            this.modalStory.set(true);
+        } else {
+            this.modalDifficulty.set(false);
+        }
     }
 
     openRules() {
@@ -201,11 +235,13 @@ export class Game {
         }
         if (!baseCard) return;
 
-        // 🔑 CLONE
+        // 🔑 CLONE — HP do nível do bloco × multiplicador de dificuldade
         const hpModifier = this.storyBlock().bossHpModifier ?? 0;
+        const level = this.storyBlock().level;
+        const hpPerLevel = hpPerLevelFor(this.difficultyId());
         const selectedCard: CardModel = {
             ...baseCard,
-            hp: baseCard.hp + this.storyBlock().level + hpModifier
+            hp: baseCard.hp + hpPerLevel * level + hpModifier
         };
 
         this.monsterSelectedCards.update(list => [

@@ -1,0 +1,115 @@
+.story-screen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 1);
+    opacity: 1;
+    z-index: 999;
+}
+
+.difficulty-selector {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 9997;
+
+    --background: rgba(35, 35, 35, 0.95);
+    --backdrop-opacity: 0.7;
+    --backdrop-background: rgba(0, 0, 0, 0.7);
+
+    --border-radius: 20px;
+    --color: #f7d7a8;
+    --button-color: #f7d7a8;
+    --button-background: transparent;
+
+    font-family: "MedievalSharpBook";
+    text-align: left;
+
+
+    ion-card-title {
+        --color: #f7d7a8;
+        text-align: center;
+    }
+
+    .difficulty-intro {
+        color: #f7d7a8;
+        font-size: 13px;
+        line-height: 1.4;
+        margin: 8px 0 0;
+        opacity: 0.95;
+        text-align: center;
+    }
+
+    ion-item {
+        --background: rgba(72, 72, 72, 0.95);
+        --color: #f7d7a8;
+        --padding-start: 0;
+        --inner-padding-end: 8px;
+        font-size: 14px;
+        --font-family: "MedievalSharpBook";
+        margin-bottom: 0;
+    }
+
+    .difficulty-item-content ion-radio-group ion-item:first-of-type {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        --border-radius: 5px 5px 0 0;
+        overflow: hidden;
+    }
+
+    .difficulty-item-content ion-radio-group ion-item:last-of-type {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        --border-radius: 0 0 5px 5px;
+        overflow: hidden;
+    }
+
+    .difficulty-item-content ion-radio-group ion-item:first-of-type:last-of-type {
+        --border-radius: 5px;
+    }
+
+    .difficulty-item-content {
+        padding: 0 8px 8px;
+    }
+
+    .difficulty-option-label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        white-space: normal;
+    }
+
+    .difficulty-option-title {
+        font-weight: 600;
+        color: #f7d7a8;
+        padding-left: 10px;
+    }
+
+    .difficulty-option-desc {
+        font-size: 12px;
+        line-height: 1.35;
+        color: #f7d7a8;
+        opacity: 0.9;
+        padding-left: 10px;
+    }
+
+    .difficulty-item-close {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 5px;
+    }
+}
+
+@media screen and (min-width: 650px) {
+    .difficulty-selector {
+        width: 400px;
+    }
+}

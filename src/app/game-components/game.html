@@ -3,6 +3,11 @@
 <div class="flash-overlay" [class.active]="flashActive()"></div>
 
 <div [class]="modalOpen() ? 'mask-card' : ''"></div>
+<app-difficulty-selector
+    [show]="modalDifficulty()"
+    [selectedDifficulty]="difficultyId()"
+    (return)="onDifficultyReturn($event)"
+></app-difficulty-selector>
 <app-story-selector [show]="modalStory()" (return)="storySelected($event)"></app-story-selector>
 <app-rules [show]="modalRules()" (return)="closeRules()"></app-rules>
 
