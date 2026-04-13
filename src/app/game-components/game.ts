@@ -11,7 +11,8 @@ import { RulesComponent } from './rules/rules.component';
 import {
     DifficultyId,
     hpPerLevelFor,
-    isDifficultyId
+    isDifficultyId,
+    randomMonsterPickCountFor
 } from '../static/difficulty';
 import { MusicService } from '../services/music.service';
 import { CardModel } from '../static/card-model';
@@ -40,7 +41,7 @@ export class Game {
     private static readonly NARRATOR_STORAGE_KEY = 'aa-story-narrator-enabled';
     private static readonly DIFFICULTY_STORAGE_KEY = 'aa-game-difficulty';
 
-    /** Multiplicador de HP por nível do bloco (Fácil 1× … Pesadelo 10×) */
+    /** Multiplicador de HP por nível do bloco (Fácil 1× … Pesadelo 8×) */
     difficultyId = signal<DifficultyId>('normal');
 
     constructor(musicService: MusicService, ttsService: TtsService) {
@@ -203,7 +204,7 @@ export class Game {
         this.battleStarted.set(true);
 
         if(!this.storyBlock().boss) { 
-            let qtd = Math.floor(Math.random() * 5) + 1
+            let qtd = randomMonsterPickCountFor(this.difficultyId())
             let deck: any = [];
 
             if(this.storyBlock().monsterType == "woods")
