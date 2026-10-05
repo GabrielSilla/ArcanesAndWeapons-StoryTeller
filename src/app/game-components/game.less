@@ -1,3 +1,12 @@
+// Fator de escala da interface: 1 em celular/tablet; cresce em telas altas (monitores)
+:host {
+    --ui-scale: 1;
+}
+
+@media screen and (min-height: 600px) { :host { --ui-scale: 1.2; } }
+@media screen and (min-height: 800px) { :host { --ui-scale: 1.5; } }
+@media screen and (min-height: 1000px) { :host { --ui-scale: 1.8; } }
+
 .mask-card{
     position: fixed;
     top: 0;
@@ -27,7 +36,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
-    max-width: 500px;
+    max-width: calc(500px * var(--ui-scale));
     z-index: 9999;
     font-family: "MedievalSharpBook";
 
@@ -37,12 +46,12 @@
 
     ion-card-title {
         --color: #f7d7a8;
-        font-size: 18px;
+        font-size: calc(18px * var(--ui-scale));
     }
 
     .decision-narrative {
         color: #f7d7a8;
-        font-size: 14px;
+        font-size: calc(14px * var(--ui-scale));
         line-height: 1.5;
         margin-bottom: 20px;
     }
@@ -54,28 +63,17 @@
 
         ion-button {
             font-family: "MedievalSharpBook";
+            font-size: calc(14px * var(--ui-scale));
         }
     }
-}
-
-.story-header {
-    font-family: "MedievalSharpBook";
-    font-size: 12px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 60px;
-    width: max-content;
-    max-width: min(92vw, 640px);
-    text-align: center;
 }
 
 .next-btn {
     ion-button {
         font-family: "MedievalSharpBook";
-        bottom:20px;
-        margin-right: 20px;
-        font-size: 15px;
+        bottom: calc(20px * var(--ui-scale));
+        margin-right: calc(20px * var(--ui-scale));
+        font-size: calc(15px * var(--ui-scale));
         position: absolute;
         z-index: 10;
         right: 15px;
@@ -85,9 +83,9 @@
 .previous-btn {
     ion-button {
         font-family: "MedievalSharpBook";
-        bottom:20px;
-        margin-left: 20px;
-        font-size: 15px;
+        bottom: calc(20px * var(--ui-scale));
+        margin-left: calc(20px * var(--ui-scale));
+        font-size: calc(15px * var(--ui-scale));
         position: absolute;
         z-index: 10;
         left: 15px;
@@ -150,8 +148,8 @@
 
     .card {
         pointer-events: auto;
-        width: 179px;
-        height: 267px;
+        width: calc(179px * var(--ui-scale));
+        height: calc(267px * var(--ui-scale));
         padding: 2px 2px 2px 2px;
         position: relative;
         border-color: white;
@@ -160,13 +158,22 @@
 
     .minus {
         position: absolute;
-        bottom: -80px;
-        left: 50px;
+        bottom: calc(-80px * var(--ui-scale));
+        left: calc(50px * var(--ui-scale));
     }
     .plus {
         position: absolute;
-        bottom: -80px;
-        right: 50px;
+        bottom: calc(-80px * var(--ui-scale));
+        right: calc(50px * var(--ui-scale));
+    }
+
+    ion-button.minus,
+    ion-button.plus {
+        font-size: calc(13px * var(--ui-scale));
+
+        ion-icon {
+            font-size: calc(20px * var(--ui-scale));
+        }
     }
 
     ion-button.minus,
@@ -188,10 +195,10 @@
             flex: 0 0 auto;
             display: flex;
             flex-direction: column;
-            width: min(179px, calc((100vw - 48px) / var(--monster-count, 6)));
+            width: min(calc(179px * var(--ui-scale)), calc((100vw - 48px) / var(--monster-count, 6)));
             height: auto;
             aspect-ratio: 179 / 267;
-            max-height: min(85vh, 267px);
+            max-height: min(85vh, calc(267px * var(--ui-scale)));
             margin: 0 4px;
             align-self: center;
 
@@ -238,7 +245,7 @@
 
 ion-icon {
     color: var(--ion-color-primary);
-    font-size: 20px;
+    font-size: calc(20px * var(--ui-scale));
 }
 
 .life-img {
@@ -265,13 +272,13 @@ ion-icon {
     justify-content: space-evenly;
 
     .monster-hp-view {
-        margin: 15px;
+        margin: calc(15px * var(--ui-scale));
         display: flex;
         
         .health-icon {
             margin-right: 5px;
-            width: 20px;
-            height: 20px;
+            width: calc(20px * var(--ui-scale));
+            height: calc(20px * var(--ui-scale));
             background: var(--ion-color-primary);
             mask-image: url('/assets/icons/hp.png');
             mask-size: contain;
@@ -281,13 +288,13 @@ ion-icon {
     }
 
     .monster-attack-view {
-        margin: 15px;
+        margin: calc(15px * var(--ui-scale));
         display: flex;
         
         .attack-icon {
             margin-right: 5px;
-            width: 20px;
-            height: 20px;
+            width: calc(20px * var(--ui-scale));
+            height: calc(20px * var(--ui-scale));
             background: var(--ion-color-primary);
             mask-image: url('/assets/icons/attack.png');
             mask-size: contain;
@@ -333,7 +340,7 @@ ion-icon {
 
     ion-icon {
         color: var(--ion-color-primary);
-        font-size: 40px;
+        font-size: calc(40px * var(--ui-scale));
         cursor: pointer;
     }
 
@@ -341,48 +348,25 @@ ion-icon {
         margin-top: 12px;
         display: block;
     }
-
-    .narrator-toggle-row {
-        margin-top: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-    }
-
-    .narrator-toggle-label {
-        font-family: "MedievalSharpBook";
-        font-size: 14px;
-        color: var(--ion-color-primary);
-        margin: 0;
-        cursor: pointer;
-        user-select: none;
-    }
-
-    .narrator-toggle-row ion-toggle {
-        --handle-width: 22px;
-        --handle-height: 22px;
-        padding-inline: 4px;
-    }
 }
 
 .story-moment-title {
     font-family: "MedievalSharpBook";
-    font-size: 14px;
+    font-size: calc(14px * var(--ui-scale));
     font-weight: 600;
 }
 
 .story-moment-view {
     .story-moment-title {
-        font-size: 16px;
+        font-size: calc(16px * var(--ui-scale));
     }
 }
 
 .dice-view {
-    margin-bottom: 8px;
+    margin-bottom: calc(8px * var(--ui-scale));
 
     ion-img {
-        width: 30px;
+        width: calc(30px * var(--ui-scale));
     }
 }
 
@@ -394,6 +378,14 @@ ion-icon {
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    // escurece a tela para o número do dado não se misturar ao cenário
+    background: rgba(0, 0, 0, 0.75);
+    animation: dice-mask-in 0.25s ease;
+}
+
+@keyframes dice-mask-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .dice-result {
@@ -438,12 +430,12 @@ ion-icon {
 }
 
 .info {
-    font-size: 17px;
+    font-size: calc(17px * var(--ui-scale));
     font-family: "MedievalSharpBook";
 }
 
 .info-large {
-    font-size: 73px;
+    font-size: calc(73px * var(--ui-scale));
     font-family: "MedievalSharpBook";
 }
 
@@ -648,7 +640,7 @@ ion-icon {
 
 .story-status-view {
     font-family: "MedievalSharpBook";
-    font-size: 37px;
+    font-size: calc(37px * var(--ui-scale));
     position: absolute;
     left: 50%;
     top: 50%;
@@ -670,7 +662,7 @@ ion-icon {
     }
 
     .right-bottom-view.many-monsters .card {
-        width: min(179px, calc((100vw - 24px) / var(--monster-count, 6)));
+        width: min(calc(179px * var(--ui-scale)), calc((100vw - 24px) / var(--monster-count, 6)));
     }
 
     .magic-card {
@@ -681,19 +673,5 @@ ion-icon {
     
     .new-items {
         width: 80%;
-    }
-}
-
-@media screen and (min-width: 1270px) {
-    .right-bottom-view:not(.many-monsters) {
-        .card {
-            width: 229px;
-            height: 350px;
-        }
-    }
-
-    .right-bottom-view.many-monsters .card {
-        width: min(229px, calc((100vw - 64px) / var(--monster-count, 6)));
-        max-height: min(85vh, 350px);
     }
 }

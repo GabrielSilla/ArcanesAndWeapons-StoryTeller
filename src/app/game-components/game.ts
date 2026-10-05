@@ -17,41 +17,46 @@ import {
 import { MusicService } from '../services/music.service';
 import { CardModel } from '../static/card-model';
 import { DecisionOption } from '../static/story-block';
-import { TtsService } from '../services/tts.service';
+import { BoardNode, BoardNodeType, StoryBoard } from '../static/board';
+import { Board } from './board/board';
 import { getSummonsForMonster } from '../static/monster-summons';
 
 const BOSS_ARAUTO_DO_FIM_ID = 10002;
 const ARAUTO_REVIVE_ATTACK_BONUS = 5;
 const REVIVE_FLASH_MS = 850;
 
+/** Nodes em que o grupo para mesmo sobrando passos no d6 */
+const BOARD_FORCED_STOPS: BoardNodeType[] = ['rest', 'reward', 'fork', 'gate', 'boss'];
+const BOARD_NODE_TITLES: Record<BoardNodeType, string> = {
+    start: 'Início da Jornada',
+    battle: 'Encontro',
+    rest: 'Ponto de Descanso',
+    reward: 'Tesouro',
+    fork: 'Encruzilhada',
+    gate: 'Portão da Tumba',
+    boss: 'Ato Final'
+};
+
+const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
+
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [IonicModule, CommonModule, Messages, StorySelector, DifficultySelector, RulesComponent],
+  imports: [IonicModule, CommonModule, Messages, StorySelector, DifficultySelector, RulesComponent, Board],
   templateUrl: './game.html',
   styleUrl: './game.less'
 })
 export class Game {
     musicService: MusicService;
-    ttsService: TtsService;
 
-    /** Preferência do narrador (TTS); persistida em localStorage */
-    narratorEnabled = signal(true);
-
-    private static readonly NARRATOR_STORAGE_KEY = 'aa-story-narrator-enabled';
     private static readonly DIFFICULTY_STORAGE_KEY = 'aa-game-difficulty';
 
     /** Multiplicador de HP por nível do bloco (Fácil 1× … Pesadelo 8×) */
     difficultyId = signal<DifficultyId>('normal');
 
-    constructor(musicService: MusicService, ttsService: TtsService) {
+    constructor(musicService: MusicService) {
         this.musicService = musicService;
-        this.ttsService = ttsService;
         try {
-            const v = localStorage.getItem(Game.NARRATOR_STORAGE_KEY);
-            if (v !== null) {
-                this.narratorEnabled.set(v === 'true');
-            }
             const d = localStorage.getItem(Game.DIFFICULTY_STORAGE_KEY);
             if (d !== null && isDifficultyId(d)) {
                 this.difficultyId.set(d);
@@ -65,25 +70,6 @@ export class Game {
         this.difficultyId.set(id);
         try {
             localStorage.setItem(Game.DIFFICULTY_STORAGE_KEY, id);
-        } catch {
-            /* ignore */
-        }
-    }
-
-    onNarratorChange(ev: Event) {
-        const checked = (ev as CustomEvent<{ checked: boolean }>).detail.checked;
-        this.setNarratorEnabled(checked);
-    }
-
-    /** Alterna o narrador (clique na label "Narrador") */
-    toggleNarrator() {
-        this.setNarratorEnabled(!this.narratorEnabled());
-    }
-
-    private setNarratorEnabled(checked: boolean) {
-        this.narratorEnabled.set(checked);
-        try {
-            localStorage.setItem(Game.NARRATOR_STORAGE_KEY, String(checked));
         } catch {
             /* ignore */
         }
@@ -122,6 +108,18 @@ export class Game {
     storyBlockIndex = signal(0);
     storyBlockCount = signal(0);
     storyBlock = signal<any>({});
+
+    // Board (campanhas jogadas no tabuleiro)
+    board = signal<StoryBoard | null>(null);
+    boardNodeId = signal('');
+    boardMoving = signal(false);
+    boardFinished = signal(false);
+    boardChoice = signal<{ title: string; options: { label: string; targetNodeId: string }[] } | null>(null);
+    private boardChoiceResolver: ((nodeId: string) => void) | null = null;
+    /** Caminho já escolhido numa bifurcação em que o grupo está parado */
+    private boardForkChoice: string | null = null;
+    /** Ação executada quando o texto da história é fechado (ex.: passar pelo portão) */
+    private afterStoryText: (() => void) | null = null;
 
     public rollD20() {
         this.animateTo(20);
@@ -308,13 +306,142 @@ export class Game {
             this.hasStorySelected.set(true);
             this.storyBlockCount.set(story.blocks.length);
             this.storyBlock.set(story.blocks[0] || {});
+
+            if (story.board) {
+                this.startBoard(story.board);
+            }
         }
-        
+
         this.modalStory.set(false);
         await this.initMusic();
     }
 
-    async storyNext() {      
+    // BOARD
+
+    boardMode() {
+        return this.board() !== null;
+    }
+
+    private startBoard(board: StoryBoard) {
+        this.board.set(board);
+        this.boardNodeId.set(board.startNodeId);
+        this.boardFinished.set(false);
+        this.boardForkChoice = null;
+        this.monsterSelectedCards.set([]);
+        this.storyBlock.set({ title: BOARD_NODE_TITLES.start, monsterType: '', level: 0, boss: false });
+        this.showStoryText(board.intro);
+    }
+
+    private boardNode(id: string): BoardNode {
+        return this.board()!.nodes.find(n => n.id === id)!;
+    }
+
+    private askBoardChoice(node: BoardNode): Promise<string> {
+        return new Promise(resolve => {
+            this.boardChoiceResolver = resolve;
+            this.boardChoice.set({
+                title: BOARD_NODE_TITLES.fork,
+                options: node.next.map(id => ({ label: node.labels?.[id] ?? id, targetNodeId: id }))
+            });
+        });
+    }
+
+    boardChoose(targetNodeId: string) {
+        this.boardChoice.set(null);
+        this.boardChoiceResolver?.(targetNodeId);
+        this.boardChoiceResolver = null;
+    }
+
+    /** Rola o d6 de movimento e anda o grupo pelo tabuleiro. */
+    async rollMovement() {
+        if (this.boardMoving() || !this.board()) return;
+        this.boardMoving.set(true);
+
+        const result = Math.floor(Math.random() * 6) + 1;
+        for (let i = 0; i < 10; i++) {
+            this.dice.set(Math.floor(Math.random() * 6) + 1);
+            await sleep(80);
+        }
+        this.dice.set(result);
+        this.diceRolled.set(true);
+        await sleep(900);
+        this.dice.set(0);
+        this.diceRolled.set(false);
+
+        await this.moveBy(result);
+        this.boardMoving.set(false);
+    }
+
+    private async moveBy(steps: number) {
+        let node = this.boardNode(this.boardNodeId());
+        if (node.next.length === 0) return;
+
+        while (steps > 0 && node.next.length > 0) {
+            let nextId: string;
+            if (node.next.length > 1) {
+                nextId = this.boardForkChoice ?? await this.askBoardChoice(node);
+                this.boardForkChoice = null;
+            } else {
+                nextId = node.next[0];
+            }
+
+            node = this.boardNode(nextId);
+            this.boardNodeId.set(node.id);
+            steps--;
+            await sleep(250);
+
+            if (BOARD_FORCED_STOPS.includes(node.type)) break;
+        }
+
+        await this.arriveAtNode(node);
+    }
+
+    private async arriveAtNode(node: BoardNode) {
+        const board = this.board()!;
+        const base = { title: BOARD_NODE_TITLES[node.type], monsterType: '', level: 0, boss: false };
+
+        switch (node.type) {
+            case 'battle':
+                this.storyBlock.set({ ...base, monsterType: node.monsterType, level: node.level });
+                this.shuffleMonsters();
+                break;
+            case 'boss':
+                this.storyBlock.set({ ...base, monsterType: node.monsterType, level: node.level, boss: true, bossId: board.bossId });
+                this.shuffleMonsters();
+                break;
+            case 'rest':
+                this.storyBlock.set(base);
+                this.showStoryText(board.restText);
+                break;
+            case 'reward':
+                this.storyBlock.set(base);
+                this.showStoryText(board.rewardText);
+                break;
+            case 'gate':
+                this.storyBlock.set(base);
+                this.afterStoryText = () => this.boardNodeId.set(node.next[0]);
+                this.showStoryText(board.gateText);
+                break;
+            case 'fork':
+                this.storyBlock.set(base);
+                this.boardForkChoice = await this.askBoardChoice(node);
+                break;
+            default:
+                this.storyBlock.set(base);
+        }
+    }
+
+    private onBattleEnded() {
+        const board = this.board();
+        if (!board) return;
+
+        if (this.boardNode(this.boardNodeId()).type === 'boss') {
+            this.boardFinished.set(true);
+            this.showStoryText(board.endText);
+        }
+    }
+
+    storyNext() {      
         this.storyBlockIndex.set(this.storyBlockIndex() + 1);
         let block = this.selectedStory()?.blocks[this.storyBlockIndex() - 1];
 
@@ -329,7 +456,6 @@ export class Game {
         this.showStoryText(block.narrative);
         this.storyBlock.set(block);
         this.bgChange.emit(block.background);
-        await this.speak(block.narrative);
     }
 
     storyPrevious() {
@@ -376,23 +502,20 @@ export class Game {
             this.showStoryText(block.narrative);
             this.storyBlock.set(block);
             this.bgChange.emit(block.background);
-            await this.speak(block.narrative);
         }
     }
 
-    async speak(text: string) {
-        if (!this.narratorEnabled()) {
+    closeStoryText() {
+        this.storyTextModal.set("");
+
+        if (this.afterStoryText) {
+            const action = this.afterStoryText;
+            this.afterStoryText = null;
+            action();
             return;
         }
-        console.log(this.selectedStory().id, this.storyBlock().id);
-        await this.ttsService.speak(text, this.selectedStory().id, this.storyBlock().id, this.selectedStory().voice);
-    }
 
-    async closeStoryText() {
-        this.storyTextModal.set("");
-        await this.ttsService.stop();
-
-        if(this.storyBlock().monsterType != '')
+        if (!this.boardMode() && this.storyBlock().monsterType != '')
             this.shuffleMonsters();
     }
 
@@ -478,13 +601,17 @@ export class Game {
             return copy;
         });
 
-        if(this.monsterSelectedCards().length == 0)
+        if(this.monsterSelectedCards().length == 0) {
             this.battleStarted.set(false);
+            this.onBattleEnded();
+        }
     } 
 
     getStoryStatusMessage() {
         if(!this.selectedStory() || !this.selectedStory().id)
             return "Escolha a aventura para iniciar!";
+        if(this.boardMode())
+            return this.boardFinished() ? "História concluída! Parabéns aventureiros." : "Role o dado para avançar!";
         if(this.hasStorySelected() && this.storyBlockIndex() == this.storyBlockCount())
             return "História concluída! Parabéns aventureiros."
         else
@@ -507,6 +634,13 @@ export class Game {
         this.storyBlock.set({});
         this.storyBlockCount.set(0);
         this.storyBlockIndex.set(0);
+        this.board.set(null);
+        this.boardNodeId.set('');
+        this.boardFinished.set(false);
+        this.boardChoice.set(null);
+        this.boardForkChoice = null;
+        this.afterStoryText = null;
+        this.monsterSelectedCards.set([]);
         this.bgChange.emit('portal');
     }
 }

@@ -1,6 +1,7 @@
 import { CardModel } from "./card-model"
 import { Story } from "./story";
 import { StoryBlock } from "./story-block";
+import { whisperingForestBoard } from "./boards/whispering-forest.board";
 
 export class Stories {
     public stories = [
@@ -23,9 +24,11 @@ export class Stories {
                 new StoryBlock(15, "Ponto de Descanso", "A batalha na câmara final deixa um rastro de névoa negra e sombras. No chão, um círculo mágico de cura se ilumina, brilhando com uma luz dourada e suave que afasta o frio da morte. Ele foi ativado pela derrota das criaturas amaldiçoadas e oferece uma última oportunidade para curar suas feridas, afiar suas lâminas e se fortalecerem para o confronto decisivo. É o ponto de não-retorno, a última chance de respirar fundo antes de enfrentar a fonte da maldição.", "cave", "", 10, false),
                 new StoryBlock(16, "Ato Final", "Vocês adentram a câmara final. O espaço se expande em uma vasta caverna subterrânea, o ar incrivelmente pesado e carregado de uma energia sinistra. No centro, um cristal negro do tamanho de um homem adulto pulsa com uma luz opaca e maligna, como um coração doente bombeando escuridão para toda a floresta. A névoa negra que assola a superfície aqui é densa como um manto, girando ao redor do cristal e se estendendo em tentáculos sombrios pelas paredes da caverna. O chão é feito de pedra irregular, coberto por uma fina camada de poeira e fragmentos de ossos antigos. Runas élficas corrompidas brilham fracamente nas paredes, pulsando em sincronia com o cristal, como se estivessem aprisionando ou alimentando sua energia. Um frio intenso emana do cristal, penetrando suas roupas e congelando a respiração em seus pulmões. Diante do cristal, paira uma figura esquelética, envolta em mantos élficos esfarrapados que já foram majestosos, mas agora estão gastos e manchados pela corrupção. Em suas mãos ossudas, ele segura um cajado retorcido, feito de madeira escura e adornado com fragmentos do mesmo cristal negro. Olhos vermelhos e vazios fitam vocês, carregados de uma maldade antiga e de um poder que corrompeu toda a floresta. A fonte da maldição da Floresta Sussurrante finalmente se revela.", "cave", "undead", 10, true, undefined, undefined, 10003),
                 new StoryBlock(17, "O Silêncio Após a Névoa", "O cristal negro estala uma última vez. As runas élficas corrompidas nas paredes piscam de forma errática e, então, se apagam. Um som grave e profundo ecoa pela caverna, como um suspiro antigo sendo finalmente libertado. A figura esquelética diante de vocês se desfaz em poeira acinzentada, levada por uma corrente de ar frio que percorre toda a tumba. O cristal, agora rachado, perde o brilho sombrio e se parte em fragmentos inertes, espalhando-se pelo chão como vidro morto.\n\nA névoa negra começa a recuar. Primeiro dentro da caverna, depois pelos corredores da tumba, como se estivesse sendo puxada de volta para um lugar que não deveria mais existir. O ar fica mais leve, e pela primeira vez desde que entraram na floresta, vocês respiram sem sentir o peso da maldição nos pulmões.\n\nAo retornarem à superfície, o amanhecer rompe as copas das árvores. A Floresta Sussurrante está diferente. A névoa desapareceu quase por completo, os galhos retorcidos parecem menos ameaçadores, e o canto tímido de pássaros ecoa entre as árvores. O silêncio opressor foi substituído por um murmúrio natural de vida retomando seu espaço.\n\nDe volta à vila de Pedraverde, Helga os recebe em silêncio, observando o céu limpo com os olhos marejados. 'Então… acabou', ela diz, com um misto de alívio e incredulidade. Os moradores saem de suas casas, ainda desconfiados, mas aos poucos a esperança toma conta do lugar. Vocês não são recebidos apenas como mercenários ou aventureiros, mas como aqueles que enfrentaram uma maldição antiga e devolveram o futuro à vila.\n\nEmbora a floresta nunca esqueça completamente o que aconteceu, a fonte da corrupção foi destruída. As ruínas élficas permanecem como um lembrete silencioso do preço da arrogância e da magia mal utilizada. E vocês seguem viagem, sabendo que deixaram para trás um lugar marcado pela escuridão… mas também pela redenção.", "village", "", 10, false)
-            ]
+            ],
+            false,
+            whisperingForestBoard
         ),
-        new Story(2, "A Cidade Onde Ninguém Dorme", "ash", 
+        new Story(2, "A Cidade Onde Ninguém Dorme", "ash",
             [
                 new StoryBlock(1, "Prólogo", "A metrópole medieval de Nova Vigília é tão imensa quanto antiga. Foi erguida sobre ruínas esquecidas, governada por conselhos corruptos e sustentada por guildas que valem mais que reis. Aqui, ninguém dorme, os nobres tramam atrás de portas de carvalho, o povo sussurra conspirando, sombras caminham sozinhas, e todos têm um preço, mesmo quando juram que não. Na última lua cheia, um assassinato abalou o equilíbrio de poder. E todas as evidências — cuidadosamente plantadas — apontam para vocês, por isso cidade inteira se move contra o grupo. Quem foi assassinado foi um aliado de vocês, com grande influência politica, chamado Jorn Mereth, que curiosamente, tinha uma reunião com o grupo antes de ser assassinado. Ninguém sabe ao certo o motivo do assassinato, será o trabalho de vocês descobrir quem o matou e porque.", "city", "", 1, false),
                 new StoryBlock(2, "Encontro 1", "As ruas apertadas do Distrito Velho cheiram a caldo quente, carvão molhado e metal oxidado. Lamparinas oscilam, presas por cordas improvisadas que cruzam os becos como teias de aranha. Velhas casas de madeira rangem sob o próprio peso. Moradores trancam portas ao ver vocês como se já soubessem de algo. Enquanto investigam o local do assassinato, percebem: pegadas apagadas com areia úmida; marcas de sangue que alguém tentou limpar às pressas; uma janela quebrada… por dentro; símbolos riscados na parede, como se alguém tivesse deixado uma mensagem oculta. Enquanto procuram por pistas, capangas da Guilda do Punho Sórdido cercam vocês. Eles não querem brigar… Eles querem garantir que vocês não saiam dali vivos. Um dos capangas hesita ao ver o grupo, talvez reconheceu vocês?", "city", "ruins", 1, false),
@@ -224,7 +227,10 @@ export class Stories {
         ], true)
     ];
 
+    /** Campanhas habilitadas no menu. As demais continuam definidas, mas desativadas. */
+    private readonly enabledStoryIds = new Set([1]);
+
     get selectableStories() {
-        return this.stories.filter(s => !s.isSubStory);
+        return this.stories.filter(s => !s.isSubStory && this.enabledStoryIds.has(s.id));
     }
 }

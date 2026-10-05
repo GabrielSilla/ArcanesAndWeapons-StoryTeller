@@ -1,0 +1,114 @@
+// O tabuleiro é o fundo do jogo: ocupa a tela toda, com a arte centralizada e sem cortes.
+:host {
+    position: fixed;
+    inset: 0;
+    display: block;
+    background: #000;
+    z-index: 0;
+}
+
+// Preenche as faixas laterais (letterbox) com a própria arte, desfocada e escurecida
+.board-backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(18px) brightness(0.55);
+    transform: scale(1.1);
+    pointer-events: none;
+    user-select: none;
+}
+
+.board-stage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(100vw, calc(100vh * var(--ar)));
+    aspect-ratio: var(--ar);
+}
+
+.board-art,
+.board-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.board-art {
+    display: block;
+    user-select: none;
+    pointer-events: none;
+}
+
+.board-svg {
+    pointer-events: none;
+}
+
+.edge-shadow {
+    stroke: #000;
+    stroke-width: 7;
+    stroke-linecap: round;
+    opacity: 0.55;
+}
+
+.edge {
+    stroke: #e9d9a8;
+    stroke-width: 3;
+    stroke-dasharray: 2 8;
+    stroke-linecap: round;
+
+    &.fork {
+        stroke: #c58df0;
+    }
+}
+
+.node-halo {
+    fill: #000;
+    opacity: 0.6;
+}
+
+.node {
+    stroke: #111;
+    stroke-width: 2.5;
+}
+
+.token {
+    &.animate {
+        transition: transform 0.25s ease;
+    }
+
+    .token-ring {
+        fill: none;
+        stroke: #ffd24a;
+        stroke-width: 5;
+        animation: token-pulse 1.4s ease-in-out infinite;
+    }
+
+    .token-core {
+        fill: #ffd24a;
+        stroke: #000;
+        stroke-width: 3;
+    }
+}
+
+@keyframes token-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+}
+
+// Escurece o tabuleiro durante os combates
+.board-dim {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+
+    &.active {
+        opacity: 1;
+    }
+}

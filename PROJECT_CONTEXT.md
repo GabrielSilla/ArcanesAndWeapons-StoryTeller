@@ -41,11 +41,15 @@ A ideia é ter **dois aplicativos** que funcionem em conjunto:
 
 - Dados virtuais: **D20**, **D12** e **D4**, com animação ao rolar.
 
-### Text-to-Speech (TTS)
+### Tabuleiro (campanhas em mapa)
 
-- Narração dos blocos de história em áudio.
-- Usa **Puter.ai** para gerar áudio quando o arquivo local ainda não existe.
-- Voz e instruções configuráveis por história (ex.: tom sombrio e dramático).
+- A campanha **"A Maldição da Floresta Sussurrante"** é jogada num **tabuleiro**: a arte do mapa é o fundo e os nodes ficam por cima (`src/app/static/boards/whispering-forest.board.ts`, componente `board`).
+- O grupo rola um **d6** e anda essa quantidade de nodes. Tipos de node: `start`, `battle`, `rest`, `reward`, `fork`, `gate`, `boss`. `rest`, `reward`, `fork`, `gate` e `boss` são paradas obrigatórias.
+- Cada node de batalha tem `monsterType` (woods, caves, ruins, undead, mountains) e `level`; o tabuleiro escurece enquanto houver monstros.
+- Ao iniciar, um breve texto de contexto; ao chegar no portão, o mapa troca da superfície para as catacumbas.
+- O layout dos nodes é editado em `tools/node-map-preview` (abrir via servidor HTTP); o resultado é copiado para o arquivo `.board.ts`.
+- As outras campanhas continuam definidas em `stories.ts`, mas **desabilitadas** (`Stories.enabledStoryIds`).
+- O narrador (TTS/Puter) foi **removido**.
 
 ### Música e Atmosfera
 
@@ -63,9 +67,9 @@ A ideia é ter **dois aplicativos** que funcionem em conjunto:
 
 1. **Inicialização** — Splash screen e início da música ambiente.
 2. **Seleção de história** — Modal para escolher a aventura.
-3. **Narração** — Mestre avança pelos blocos, lê a narrativa e ouve o TTS.
-4. **Combate** — Nos blocos com monstros, o sistema embaralha e sorteia cartas; o Mestre gerencia HP.
-5. **Bosses** — Blocos marcados como boss utilizam cartas especiais de chefes.
+3. **Tabuleiro** — Texto de contexto, depois o grupo rola o d6 e anda pelos nodes do mapa.
+4. **Combate** — Nos nodes de batalha, o sistema embaralha e sorteia cartas; o Mestre gerencia HP.
+5. **Bosses** — O node de boss utilizam cartas especiais de chefes.
 6. **Conclusão** — Ao final da história, opção de resetar.
 
 ---
@@ -77,7 +81,6 @@ A ideia é ter **dois aplicativos** que funcionem em conjunto:
 | Angular 21 | Framework principal |
 | Ionic | Componentes de UI para mobile |
 | Capacitor 7 | Build nativo para Android |
-| Puter.ai | Geração de áudio (TTS) |
 | Vitest | Testes |
 
 ---
@@ -95,7 +98,8 @@ A ideia é ter **dois aplicativos** que funcionem em conjunto:
 - `src/app/game-components/game.ts` — Componente principal do jogo.
 - `src/app/static/stories.ts` — Definição das aventuras.
 - `src/app/static/cards.ts` — Definição das cartas de monstros e bosses.
-- `src/app/services/tts.service.ts` — Serviço de Text-to-Speech.
+- `src/app/static/board.ts` e `src/app/static/boards/` — Modelo e dados dos tabuleiros.
+- `src/app/game-components/board/` — Componente que desenha o tabuleiro.
 - `src/app/services/music.service.ts` — Serviço de música.
 - `capacitor.config.ts` — Configuração do Capacitor para builds nativos.
 

@@ -1,0 +1,23 @@
+<img class="board-backdrop" *ngIf="art" [src]="art.image" alt="">
+<div class="board-stage" *ngIf="art" [style.--ar]="aspectRatio">
+    <img class="board-art" [src]="art.image" alt="">
+    <svg class="board-svg" [attr.viewBox]="'0 0 ' + art.width + ' ' + art.height">
+        <g>
+            <ng-container *ngFor="let e of edges">
+                <line class="edge-shadow" [attr.x1]="e.from.x" [attr.y1]="e.from.y" [attr.x2]="e.to.x" [attr.y2]="e.to.y"></line>
+                <line class="edge" [class.fork]="e.fork" [attr.x1]="e.from.x" [attr.y1]="e.from.y" [attr.x2]="e.to.x" [attr.y2]="e.to.y"></line>
+            </ng-container>
+        </g>
+        <g>
+            <ng-container *ngFor="let n of nodes">
+                <circle class="node-halo" [attr.cx]="n.x" [attr.cy]="n.y" [attr.r]="look(n).radius + 3"></circle>
+                <circle class="node" [attr.cx]="n.x" [attr.cy]="n.y" [attr.r]="look(n).radius" [attr.fill]="look(n).color"></circle>
+            </ng-container>
+        </g>
+        <g *ngIf="token" class="token" [class.animate]="animateToken" [style.transform]="'translate(' + token.x + 'px,' + token.y + 'px)'">
+            <circle class="token-ring" r="26"></circle>
+            <circle class="token-core" r="7"></circle>
+        </g>
+    </svg>
+</div>
+<div class="board-dim" [class.active]="dimmed"></div>

@@ -43,13 +43,9 @@ Este ficheiro regista mudanças relevantes no repositório para referência ráp
 
 ---
 
-## 2. Toggle do narrador (TTS)
+## 2. Toggle do narrador (TTS) — removido
 
-- **Ficheiros:** `game.html`, `game.ts`, `game.less`
-- Na tela inicial (sem história selecionada), abaixo do ícone de regras: label **“Narrador”** e **`ion-toggle`** (toggle por baixo da label, em coluna).
-- Clique na label chama `toggleNarrator()`; o switch usa `onNarratorChange` / `setNarratorEnabled`.
-- Preferência em **`localStorage`**, chave `aa-story-narrator-enabled`.
-- Em `speak()`: se o narrador estiver desligado, não chama o `TtsService`.
+- O narrador (TTS), seu toggle e o `TtsService` foram removidos quando a primeira campanha passou para o tabuleiro.
 
 ---
 
