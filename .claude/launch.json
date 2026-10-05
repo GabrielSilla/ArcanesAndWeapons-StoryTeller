@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "node-map-preview",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "tools/node-map-preview"],
+      "port": 8765
+    },
+    {
+      "name": "aa-game",
+      "runtimeExecutable": "C:\\Users\\Gabriel\\AppData\\Local\\nvm\\v24.12.0\\node.exe",
+      "runtimeArgs": ["node_modules/@angular/cli/bin/ng.js", "serve", "--port", "4200"],
+      "port": 4200
+    }
+  ]
+}

@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview dos Nodes - Floresta Sussurrante</title>
+<!-- preview de layout de nodes; as artes estão embutidas em base64 -->
+
+<style>
+  :root { --bg:#14110e; --panel:#1f1a15; --line:#3b3027; --text:#e8dcc8; --muted:#a39580; --gold:#d9a441; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:14px/1.4 system-ui,Segoe UI,sans-serif; }
+  header { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:10px 14px; background:var(--panel); border-bottom:1px solid var(--line); }
+  header h1 { font-size:16px; margin:0 12px 0 0; color:var(--gold); }
+  button { background:#2c241c; color:var(--text); border:1px solid var(--line); padding:6px 12px; border-radius:6px; cursor:pointer; font:inherit; }
+  button:hover { border-color:var(--gold); }
+  button.active { background:var(--gold); color:#1a1408; border-color:var(--gold); font-weight:600; }
+  label.chk { color:var(--muted); display:flex; gap:4px; align-items:center; cursor:pointer; }
+  main { display:grid; grid-template-columns:1fr 300px; gap:12px; padding:12px; }
+  @media (max-width:1000px) { main { grid-template-columns:1fr; } }
+  #stage { position:relative; width:100%; aspect-ratio:2000/1115; background:#000; border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+  #stage img, #stage svg { position:absolute; inset:0; width:100%; height:100%; }
+  #stage img { display:block; }
+  aside { display:flex; flex-direction:column; gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:10px 12px; }
+  .card h2 { font-size:13px; margin:0 0 8px; color:var(--gold); text-transform:uppercase; letter-spacing:.05em; }
+  .legend #legend { display:grid; grid-template-columns:1fr 1fr; gap:2px 10px; } .legend div { display:flex; align-items:center; gap:8px; margin:3px 0; font-size:12px; }
+  .dot { width:14px; height:14px; border-radius:50%; border:2px solid #000; flex:none; }
+  #log { max-height:200px; overflow:auto; font-size:13px; color:var(--muted); }
+  #log p { margin:2px 0; } #log p:first-child { color:var(--text); }
+  #choice { position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.55); z-index:5; }
+  #choice .box { background:var(--panel); border:1px solid var(--gold); border-radius:8px; padding:16px 20px; max-width:420px; text-align:center; }
+  #choice .box button { display:block; width:100%; margin-top:8px; padding:10px; }
+  #die { font-size:30px; font-weight:700; color:var(--gold); min-width:40px; text-align:center; }
+  textarea { width:100%; height:120px; background:#120f0c; color:var(--text); border:1px solid var(--line); font:11px monospace; }
+  .stat { display:flex; justify-content:space-between; } .stat span:last-child { color:var(--text); }
+  .muted { color:var(--muted); font-size:12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>A Maldição da Floresta Sussurrante — nodes</h1>
+  <button id="tabSup" class="active">Superfície</button>
+  <button id="tabTomb">Catacumbas</button>
+  <label class="chk"><input type="checkbox" id="chkIds"> ids</label>
+  <label class="chk"><input type="checkbox" id="chkEdit"> editar (arrastar nodes)</label>
+  <button id="btnExport">Exportar JSON</button>
+</header>
+<main>
+  <div id="stage">
+    <img id="bg" alt="mapa">
+    <svg id="svg" viewBox="0 0 2000 1115"></svg>
+    <div id="choice"><div class="box"><div id="choiceTitle"></div><div id="choiceBtns"></div></div></div>
+  </div>
+  <aside>
+    <div class="card">
+      <h2>Simulador</h2>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button id="btnRoll">Rolar d6</button>
+        <div id="die">–</div>
+        <button id="btnReset">Reiniciar</button>
+      </div>
+      <p class="muted">Anda a quantidade rolada. Descanso, baú, bifurcação, portão e boss são paradas obrigatórias.</p>
+      <div id="log"></div>
+    </div>
+    <div class="card">
+      <h2>Estatísticas</h2>
+      <div id="stats"></div>
+    </div>
+    <div class="card legend">
+      <h2>Legenda</h2>
+      <div id="legend"></div>
+    </div>
+    <div class="card" id="exportCard" style="display:none">
+      <h2>JSON (copie e me envie)</h2>
+      <textarea id="json" readonly></textarea>
+    </div>
+  </aside>
+</main>
+
+<script>
+const TYPES = {
+  start:  { color:'#f5f5f5', name:'Início',                 r:14 },
+  battle: { color:'#c0392b', name:'Batalha',                r:10 },
+  rest:   { color:'#3fae5a', name:'Descanso (parada)',      r:13 },
+  reward: { color:'#e8b730', name:'Recompensa (parada)',    r:14 },
+  fork:   { color:'#9b59d0', name:'Bifurcação (parada)',    r:14 },
+  gate:   { color:'#e67e22', name:'Portão / troca de mapa', r:16 },
+  boss:   { color:'#ff2f6d', name:'Boss',                   r:20 }
+};
+const FORCED_STOP = new Set(['rest','reward','fork','gate','boss']);
+const MAPS = { sup:{ img:'superficie.webp', title:'Superfície' }, tomb:{ img:'tomba.webp', title:'Catacumbas' } };
+
+const N = {};
+function add(map, list) { list.forEach(([id,x,y,type='battle']) => N[id] = { id, map, x, y, type, next:[], labels:{} }); }
+function chain(...ids) { for (let i=0;i<ids.length-1;i++) N[ids[i]].next.push(ids[i+1]); }
+function fork(id, opts) { opts.forEach(([to,label]) => { N[id].next.push(to); N[id].labels[to] = label; }); }
+
+/* ---------- SUPERFÍCIE ---------- */
+add('sup', [
+  ['S01',330,880,'start'], ['S02',400,830], ['S03',450,790,'fork'],
+  // margem sul (curta)
+  ['SS1',540,775], ['SS2',650,740], ['SS3',760,700], ['SS4',850,650],
+  // norte (longa)
+  ['N01',400,720], ['N02',350,640], ['N03',330,560], ['N04',390,490], ['N05',470,430,'rest'],
+  ['N06',570,400], ['N07',680,390], ['N08',780,410], ['N09',860,465], ['N10',900,530,'reward'],
+  // encontro das trilhas, diante do muro que fecha a porta oeste
+  ['M01',935,605,'rest'],
+  // contorno obrigatório das muralhas por fora
+  ['E01',965,700], ['E02',1030,765], ['E03',1125,815], ['E04',1235,850], ['E05',1325,865],
+  ['E06',1373,863,'fork'],
+  // brecha sul do anel (curto)
+  ['B01',1365,805], ['B02',1348,745], ['B03',1340,690], ['B04',1332,640],
+  // trilha sul: desvio de ida e volta pelo mesmo caminho (volta deslocada 16 p/ não sobrepor)
+  ['T01',1379,922], ['T02',1382,970], ['T03',1379,1020], ['T04',1387,1073,'reward'],
+  ['T03r',1418,1020], ['T02r',1421,961,'rest'], ['T01r',1424,916],
+  ['G01',1310,600,'gate']
+]);
+chain('S01','S02','S03');
+fork('S03', [['SS1','Margem sul — curta'], ['N01','Contornar o lago pelo norte — longa, com baú']]);
+chain('SS1','SS2','SS3','SS4','M01');
+chain('N01','N02','N03','N04','N05','N06','N07','N08','N09','N10','M01');
+chain('M01','E01','E02','E03','E04','E05','E06');
+fork('E06', [['B01','Subir pela brecha sul — direto'], ['T01','Descer a trilha sul até o baú — ida e volta']]);
+chain('B01','B02','B03','B04','G01');
+chain('T01','T02','T03','T04','T03r','T02r','T01r','B01');
+
+/* ---------- CATACUMBAS ---------- */
+add('tomb', [
+  ['K01',210,400,'start'], ['K02',330,400], ['K03',450,460], ['K04',560,520], ['K05',690,570],
+  ['KF',840,650,'fork'],
+  // corredor dos nichos (curto)
+  ['U01',940,540], ['U02',1070,480], ['U03',1200,430], ['U04',1330,340], ['U05',1450,270],
+  // caverna inferior (longa)
+  ['L01',890,760], ['L02',960,880], ['L03',1080,970], ['L04',1250,1000], ['L05',1450,985,'rest'],
+  ['L06',1620,940], ['L07',1780,860,'reward'], ['L08',1890,740], ['L09',1790,640], ['L10',1690,545],
+  ['M02',1620,440,'rest'], ['BOSS',1735,320,'boss']
+]);
+chain('K01','K02','K03','K04','K05','KF');
+fork('KF', [['U01','Corredor dos nichos — curto'], ['L01','Caverna inferior — longa, com baú']]);
+chain('U01','U02','U03','U04','U05','M02');
+chain('L01','L02','L03','L04','L05','L06','L07','L08','L09','L10','M02');
+chain('M02','BOSS');
+N['G01'].next.push('K01');   // portão da superfície -> entrada da cripta
+
+
+/* ---------- SUBDIVISÃO: insere nodes intermediários nos trechos longos ---------- */
+const SPACING = { sup:57, tomb:88 };   // distância-alvo entre nodes por mapa (unidades 2000x1115)
+(function subdivide() {
+  Object.values({ ...N }).forEach(a => {
+    if (a.next.length !== 1) return;                 // não mexe nas bifurcações
+    const b = N[a.next[0]];
+    if (b.map !== a.map) return;                     // nem na ligação entre mapas
+    const len = Math.hypot(b.x - a.x, b.y - a.y);
+    const parts = Math.round(len / SPACING[a.map]);
+    if (parts < 2) return;
+    let prev = a;
+    for (let i = 1; i < parts; i++) {
+      const id = `${a.id}~${i}`;
+      N[id] = { id, map:a.map, x:Math.round(a.x + (b.x-a.x)*i/parts), y:Math.round(a.y + (b.y-a.y)*i/parts), type:'battle', next:[], labels:{} };
+      prev.next = [id]; prev = N[id];
+    }
+    prev.next = [b.id];
+  });
+})();
+
+/* ---------- RENDER ---------- */
+const svg = document.getElementById('svg'), bg = document.getElementById('bg');
+let curMap = 'sup', showIds = false, editMode = false;
+let token = 'S01';
+const NS = 'http://www.w3.org/2000/svg';
+const el = (n, a={}) => { const e = document.createElementNS(NS,n); for (const k in a) e.setAttribute(k,a[k]); return e; };
+
+function render() {
+  bg.src = MAPS[curMap].img;
+  svg.innerHTML = '';
+  const gE = el('g'), gN = el('g');
+  svg.append(gE, gN);
+  const nodes = Object.values(N).filter(n => n.map === curMap);
+  nodes.forEach(n => n.next.forEach(t => {
+    const to = N[t]; if (!to || to.map !== curMap) return;
+    gE.append(el('line', { x1:n.x, y1:n.y, x2:to.x, y2:to.y, stroke:'#000', 'stroke-width':7, 'stroke-linecap':'round', opacity:.55 }));
+    gE.append(el('line', { x1:n.x, y1:n.y, x2:to.x, y2:to.y, stroke: n.next.length>1 ? '#c58df0' : '#e9d9a8', 'stroke-width':3, 'stroke-dasharray':'2 8', 'stroke-linecap':'round' }));
+  }));
+  nodes.forEach(n => {
+    const T = TYPES[n.type];
+    const g = el('g', { 'data-id':n.id, style: editMode ? 'cursor:grab' : 'cursor:default' });
+    g.append(el('circle', { cx:n.x, cy:n.y, r:T.r+3, fill:'#000', opacity:.6 }));
+    g.append(el('circle', { cx:n.x, cy:n.y, r:T.r, fill:T.color, stroke:'#111', 'stroke-width':2.5 }));
+    const tt = el('title'); tt.textContent = `${n.id} — ${T.name}`; g.append(tt);
+    if (showIds || n.type === 'boss' || n.type === 'gate') {
+      const t = el('text', { x:n.x, y:n.y-T.r-9, 'text-anchor':'middle', fill:'#fff', stroke:'#000', 'stroke-width':4, 'paint-order':'stroke', 'font-size':22, 'font-weight':700 });
+      t.textContent = n.type==='boss' ? 'BOSS' : n.type==='gate' ? 'TUMBA' : n.id; g.append(t);
+    }
+    gN.append(g);
+    if (editMode) enableDrag(g, n);
+  });
+  // rótulos de bifurcação
+  nodes.filter(n => n.next.length>1).forEach(n => {
+    const t = el('text', { x:n.x, y:n.y+44, 'text-anchor':'middle', fill:'#e6c9ff', stroke:'#000', 'stroke-width':5, 'paint-order':'stroke', 'font-size':24, 'font-weight':700 });
+    t.textContent = '⑂ escolha'; svg.append(t);
+  });
+  // token
+  const tk = N[token];
+  if (tk && tk.map === curMap) {
+    const g = el('g');
+    g.append(el('circle', { cx:tk.x, cy:tk.y, r:26, fill:'none', stroke:'#ffd24a', 'stroke-width':5 }));
+    g.append(el('circle', { cx:tk.x, cy:tk.y, r:7, fill:'#ffd24a', stroke:'#000', 'stroke-width':3 }));
+    svg.append(g);
+  }
+  document.getElementById('tabSup').classList.toggle('active', curMap==='sup');
+  document.getElementById('tabTomb').classList.toggle('active', curMap==='tomb');
+}
+
+function enableDrag(g, n) {
+  g.addEventListener('pointerdown', e => {
+    e.preventDefault(); g.setPointerCapture(e.pointerId); g.style.cursor = 'grabbing';
+    const move = ev => {
+      const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+      const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+      n.x = Math.round(p.x); n.y = Math.round(p.y); render();
+    };
+    const up = () => { g.removeEventListener('pointermove', move); g.removeEventListener('pointerup', up); };
+    g.addEventListener('pointermove', move); g.addEventListener('pointerup', up);
+  });
+}
+
+/* ---------- ESTATÍSTICAS ---------- */
+function paths(from, to, memo = {}) {
+  // retorna [menor, maior] qtd de nodes entre from e to (inclusive)
+  if (from === to) return [1,1];
+  if (memo[from]) return memo[from];
+  let lo = Infinity, hi = -Infinity;
+  N[from].next.forEach(t => { const [a,b] = paths(t, to, memo); lo = Math.min(lo, a+1); hi = Math.max(hi, b+1); });
+  return memo[from] = [lo, hi];
+}
+function stats() {
+  const all = Object.values(N);
+  const count = m => all.filter(n => m==null || n.map===m).length;
+  const byType = {}; all.forEach(n => byType[n.type] = (byType[n.type]||0)+1);
+  const [sLo,sHi] = paths('S01','G01'), [tLo,tHi] = paths('K01','BOSS');
+  const row = (a,b) => `<div class="stat"><span>${a}</span><span>${b}</span></div>`;
+  document.getElementById('stats').innerHTML =
+    row('Nodes na superfície', count('sup')) + row('Nodes nas catacumbas', count('tomb')) +
+    row('Rota superfície (curta–longa)', `${sLo}–${sHi} nodes`) +
+    row('Rota catacumbas (curta–longa)', `${tLo}–${tHi} nodes`) +
+    row('Rolagens esperadas (média 3,5)', `${((sLo+tLo)/3.5).toFixed(1)}–${((sHi+tHi)/3.5).toFixed(1)}`) +
+    '<hr style="border:0;border-top:1px solid var(--line)">' +
+    Object.entries(TYPES).map(([k,v]) => row(v.name, byType[k]||0)).join('');
+}
+document.getElementById('legend').innerHTML = Object.values(TYPES)
+  .map(t => `<div><span class="dot" style="background:${t.color}"></span>${t.name}</div>`).join('');
+
+/* ---------- SIMULADOR ---------- */
+const logEl = document.getElementById('log'), dieEl = document.getElementById('die');
+const log = msg => { const p = document.createElement('p'); p.textContent = msg; logEl.prepend(p); };
+let busy = false;
+
+function askChoice(node) {
+  return new Promise(res => {
+    const box = document.getElementById('choice');
+    document.getElementById('choiceTitle').innerHTML = '<b>O caminho se divide.</b><br>Para onde vão?';
+    const btns = document.getElementById('choiceBtns'); btns.innerHTML = '';
+    node.next.forEach(t => {
+      const b = document.createElement('button'); b.textContent = node.labels[t] || t;
+      b.onclick = () => { box.style.display = 'none'; res(t); };
+      btns.append(b);
+    });
+    box.style.display = 'flex';
+  });
+}
+async function roll() {
+  if (busy) return; busy = true;
+  let steps = 1 + Math.floor(Math.random()*6);
+  dieEl.textContent = steps; log(`🎲 Rolou ${steps}`);
+  let cur = N[token];
+  if (cur.next.length === 0) { log('Fim da campanha!'); busy = false; return; }
+  if (cur.next.length > 1) { const t = await askChoice(cur); cur = N[t]; steps--; step(cur); }
+  else { cur = N[cur.next[0]]; steps--; step(cur); }
+  while (steps > 0 && !FORCED_STOP.has(cur.type) && cur.next.length === 1) {
+    await new Promise(r => setTimeout(r, 180));
+    cur = N[cur.next[0]]; steps--; step(cur);
+  }
+  const why = FORCED_STOP.has(cur.type) && steps > 0 ? ' (parada obrigatória)' : '';
+  log(`📍 Parou em ${cur.id}: ${TYPES[cur.type].name}${why}`);
+  busy = false;
+}
+function step(n) { token = n.id; if (n.map !== curMap) curMap = n.map; render(); }
+
+document.getElementById('btnRoll').onclick = roll;
+document.getElementById('btnReset').onclick = () => { token = 'S01'; curMap = 'sup'; logEl.innerHTML=''; dieEl.textContent='–'; busy=false; render(); };
+document.getElementById('tabSup').onclick = () => { curMap='sup'; render(); };
+document.getElementById('tabTomb').onclick = () => { curMap='tomb'; render(); };
+document.getElementById('chkIds').onchange = e => { showIds = e.target.checked; render(); };
+document.getElementById('chkEdit').onchange = e => { editMode = e.target.checked; render(); };
+document.getElementById('btnExport').onclick = () => {
+  const out = Object.values(N).map(n => ({ id:n.id, map:n.map, x:n.x, y:n.y, type:n.type, next:n.next, ...(Object.keys(n.labels).length ? { labels:n.labels } : {}) }));
+  const ta = document.getElementById('json'); ta.value = JSON.stringify(out);
+  document.getElementById('exportCard').style.display = 'block';
+  ta.select(); try { document.execCommand('copy'); } catch(e) {}
+};
+
+stats(); render();
+</script>
+</body>
+</html>
