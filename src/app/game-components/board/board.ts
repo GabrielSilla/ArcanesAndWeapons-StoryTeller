@@ -9,6 +9,7 @@ interface NodeLook {
 
 const NODE_LOOK: Record<BoardNodeType, NodeLook> = {
     start:  { color: '#f5f5f5', radius: 14 },
+    safe:   { color: '#cfc8b8', radius: 10 },
     battle: { color: '#c0392b', radius: 10 },
     rest:   { color: '#3fae5a', radius: 13 },
     reward: { color: '#e8b730', radius: 14 },

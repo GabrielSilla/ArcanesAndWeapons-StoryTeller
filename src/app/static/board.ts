@@ -1,7 +1,7 @@
 /** Tipo do deck de monstros sorteado em um node de batalha (mesmos decks de `Cards`). */
 export type MonsterType = 'woods' | 'caves' | 'ruins' | 'undead' | 'mountains' | '';
 
-export type BoardNodeType = 'start' | 'battle' | 'rest' | 'reward' | 'fork' | 'gate' | 'boss';
+export type BoardNodeType = 'start' | 'safe' | 'battle' | 'rest' | 'reward' | 'fork' | 'gate' | 'boss';
 
 export interface BoardNode {
     id: string;

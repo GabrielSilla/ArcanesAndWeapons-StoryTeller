@@ -29,6 +29,7 @@ const REVIVE_FLASH_MS = 850;
 const BOARD_FORCED_STOPS: BoardNodeType[] = ['rest', 'reward', 'fork', 'gate', 'boss'];
 const BOARD_NODE_TITLES: Record<BoardNodeType, string> = {
     start: 'Início da Jornada',
+    safe: 'Vila',
     battle: 'Encontro',
     rest: 'Ponto de Descanso',
     reward: 'Tesouro',

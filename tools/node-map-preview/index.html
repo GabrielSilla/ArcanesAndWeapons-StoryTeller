@@ -81,6 +81,7 @@
 <script>
 const TYPES = {
   start:  { color:'#f5f5f5', name:'Início',                 r:14 },
+  safe:   { color:'#cfc8b8', name:'Vila (sem evento)',      r:10 },
   battle: { color:'#c0392b', name:'Batalha',                r:10 },
   rest:   { color:'#3fae5a', name:'Descanso (parada)',      r:13 },
   reward: { color:'#e8b730', name:'Recompensa (parada)',    r:14 },
@@ -92,60 +93,71 @@ const FORCED_STOP = new Set(['rest','reward','fork','gate','boss']);
 const MAPS = { sup:{ img:'superficie.webp', title:'Superfície' }, tomb:{ img:'tomba.webp', title:'Catacumbas' } };
 
 const N = {};
-function add(map, list) { list.forEach(([id,x,y,type='battle']) => N[id] = { id, map, x, y, type, next:[], labels:{} }); }
+const ART_PX = { w:1678, h:937 };   // tamanho real das artes; o espaço de trabalho é 2000x1115
+function add(map, list) { list.forEach(([id,x,y,type='battle']) => N[id] = { id, map, x:Math.round(x*2000/ART_PX.w), y:Math.round(y*1115/ART_PX.h), type, next:[], labels:{} }); }
 function chain(...ids) { for (let i=0;i<ids.length-1;i++) N[ids[i]].next.push(ids[i+1]); }
 function fork(id, opts) { opts.forEach(([to,label]) => { N[id].next.push(to); N[id].labels[to] = label; }); }
 
-/* ---------- SUPERFÍCIE ---------- */
+/* ---------- SUPERFÍCIE ----------
+   Coordenadas medidas na arte (1678x937 px); add() converte para o espaço 2000x1115. */
 add('sup', [
-  ['S01',330,880,'start'], ['S02',400,830], ['S03',450,790,'fork'],
+  // início dentro da vila; a trilha contorna a cerca pelo oeste e pelo sul até o portão leste
+  ['S01',236,680,'start'], ['A01',186,642,'safe'], ['A02',148,640,'safe'], ['A03',112,652,'safe'], ['A04',88,678,'safe'],
+  ['A05',84,712,'safe'], ['A06',100,742,'safe'], ['A07',144,762,'safe'], ['A08',194,775], ['A09',244,784],
+  ['A10',294,784], ['A11',344,781], ['A12',392,766], ['A13',428,740],
+  ['S03',446,696,'fork'],
   // margem sul (curta)
-  ['SS1',540,775], ['SS2',650,740], ['SS3',760,700], ['SS4',850,650],
-  // norte (longa)
-  ['N01',400,720], ['N02',350,640], ['N03',330,560], ['N04',390,490], ['N05',470,430,'rest'],
-  ['N06',570,400], ['N07',680,390], ['N08',780,410], ['N09',860,465], ['N10',900,530,'reward'],
-  // encontro das trilhas, diante do muro que fecha a porta oeste
-  ['M01',935,605,'rest'],
-  // contorno obrigatório das muralhas por fora
-  ['E01',965,700], ['E02',1030,765], ['E03',1125,815], ['E04',1235,850], ['E05',1325,865],
-  ['E06',1373,863,'fork'],
-  // brecha sul do anel (curto)
-  ['B01',1365,805], ['B02',1348,745], ['B03',1340,690], ['B04',1332,640],
-  // trilha sul: desvio de ida e volta pelo mesmo caminho (volta deslocada 16 p/ não sobrepor)
-  ['T01',1379,922], ['T02',1382,970], ['T03',1379,1020], ['T04',1387,1073,'reward'],
-  ['T03r',1418,1020], ['T02r',1421,961,'rest'], ['T01r',1424,916],
-  ['G01',1310,600,'gate']
+  ['SS1',500,664], ['SS2',560,636], ['SS3',620,613], ['SS4',680,588], ['SS5',735,560],
+  // norte, pela margem oeste do lago (longa)
+  ['N01',419,649], ['N02',394,621], ['N03',354,581], ['N04',306,549], ['N05',285,515,'rest'],
+  ['N06',298,475], ['N07',344,441], ['N08',389,406], ['N09',434,383], ['N10',474,369],
+  ['N11',524,369], ['N12',575,371], ['N13',632,372], ['N14',682,390], ['N15',726,417],
+  ['N16',760,456], ['N17',772,497], ['N18',758,533,'reward'],  // encontro das trilhas, junto à muralha
+  ['M01',810,552,'rest'],
+  // contorno obrigatório da muralha sul
+  ['E01',868,592], ['E02',925,628], ['E03',985,660], ['E04',1045,680], ['E05',1100,692],
+  ['E06',1150,698,'fork'],
+  // escada na brecha do muro (curto)
+  ['B01',1165,655], ['B02',1162,618], ['B03',1160,582], ['B04',1165,545],
+  // trilha sul: ida e volta (volta deslocada para não sobrepor)
+  ['T01',1175,738], ['T02',1186,788], ['T03',1181,840], ['T04',1152,902,'reward'],
+  ['T03r',1210,842], ['T02r',1216,790,'rest'], ['T01r',1205,740],
+  ['G01',1165,500,'gate']
 ]);
-chain('S01','S02','S03');
+chain('S01','A01','A02','A03','A04','A05','A06','A07','A08','A09','A10','A11','A12','A13','S03');
 fork('S03', [['SS1','Margem sul — curta'], ['N01','Contornar o lago pelo norte — longa, com baú']]);
-chain('SS1','SS2','SS3','SS4','M01');
-chain('N01','N02','N03','N04','N05','N06','N07','N08','N09','N10','M01');
+chain('SS1','SS2','SS3','SS4','SS5','M01');
+chain('N01','N02','N03','N04','N05','N06','N07','N08','N09','N10','N11','N12','N13','N14','N15','N16','N17','N18','M01');
 chain('M01','E01','E02','E03','E04','E05','E06');
-fork('E06', [['B01','Subir pela brecha sul — direto'], ['T01','Descer a trilha sul até o baú — ida e volta']]);
+fork('E06', [['B01','Subir pela escada do muro — direto'], ['T01','Descer a trilha sul até o baú — ida e volta']]);
 chain('B01','B02','B03','B04','G01');
 chain('T01','T02','T03','T04','T03r','T02r','T01r','B01');
 
 /* ---------- CATACUMBAS ---------- */
 add('tomb', [
-  ['K01',210,400,'start'], ['K02',330,400], ['K03',450,460], ['K04',560,520], ['K05',690,570],
-  ['KF',840,650,'fork'],
+  ['K01',190,255,'start'], ['K02',255,292], ['K03',320,345], ['K04',385,385], ['K05',450,418],
+  ['K06',515,440], ['K07',600,440], ['K08',655,478], ['K09',705,515],
+  ['KF',760,548,'fork'],
   // corredor dos nichos (curto)
-  ['U01',940,540], ['U02',1070,480], ['U03',1200,430], ['U04',1330,340], ['U05',1450,270],
+  ['U01',795,480], ['U02',835,430], ['U03',905,413], ['U04',975,395], ['U05',1045,372],
+  ['U06',1110,348], ['U07',1170,320], ['U08',1215,292], ['U09',1280,305],
   // caverna inferior (longa)
-  ['L01',890,760], ['L02',960,880], ['L03',1080,970], ['L04',1250,1000], ['L05',1450,985,'rest'],
-  ['L06',1620,940], ['L07',1780,860,'reward'], ['L08',1890,740], ['L09',1790,640], ['L10',1690,545],
-  ['M02',1620,440,'rest'], ['BOSS',1735,320,'boss']
+  ['L01',785,610], ['L02',828,672], ['L03',875,728], ['L04',945,785], ['L05',1005,840,'reward'],
+  ['L06',1080,820], ['L07',1170,805], ['L08',1270,785,'rest'], ['L09',1370,775], ['L10',1440,776],
+  ['L11',1500,766], ['L12',1545,738], ['L13',1585,695], ['L14',1600,648], ['L15',1590,600],
+  ['L16',1545,560], ['L17',1490,505], ['L18',1440,458], ['L19',1400,425],
+  // plataforma do cristal
+  ['M02',1365,368,'rest'], ['BOSS',1422,332,'boss']
 ]);
-chain('K01','K02','K03','K04','K05','KF');
+chain('K01','K02','K03','K04','K05','K06','K07','K08','K09','KF');
 fork('KF', [['U01','Corredor dos nichos — curto'], ['L01','Caverna inferior — longa, com baú']]);
-chain('U01','U02','U03','U04','U05','M02');
-chain('L01','L02','L03','L04','L05','L06','L07','L08','L09','L10','M02');
-chain('M02','BOSS');
-N['G01'].next.push('K01');   // portão da superfície -> entrada da cripta
+chain('U01','U02','U03','U04','U05','U06','U07','U08','U09','M02');
+chain('L01','L02','L03','L04','L05','L06','L07','L08','L09','L10','L11','L12','L13','L14','L15','L16','L17','L18','L19','M02');
+chain('M02','BOSS');N['G01'].next.push('K01');   // portão da superfície -> entrada da cripta
 
 
 /* ---------- SUBDIVISÃO: insere nodes intermediários nos trechos longos ---------- */
-const SPACING = { sup:57, tomb:88 };   // distância-alvo entre nodes por mapa (unidades 2000x1115)
+const SPACING = { sup:48, tomb:88 };   // distância-alvo entre nodes por mapa (unidades 2000x1115)
 (function subdivide() {
   Object.values({ ...N }).forEach(a => {
     if (a.next.length !== 1) return;                 // não mexe nas bifurcações
@@ -157,7 +169,7 @@ const SPACING = { sup:57, tomb:88 };   // distância-alvo entre nodes por mapa (
     let prev = a;
     for (let i = 1; i < parts; i++) {
       const id = `${a.id}~${i}`;
-      N[id] = { id, map:a.map, x:Math.round(a.x + (b.x-a.x)*i/parts), y:Math.round(a.y + (b.y-a.y)*i/parts), type:'battle', next:[], labels:{} };
+      N[id] = { id, map:a.map, x:Math.round(a.x + (b.x-a.x)*i/parts), y:Math.round(a.y + (b.y-a.y)*i/parts), type:(['safe','start'].includes(a.type) && ['safe','start'].includes(b.type)) ? 'safe' : 'battle', next:[], labels:{} };
       prev.next = [id]; prev = N[id];
     }
     prev.next = [b.id];
