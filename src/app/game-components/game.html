@@ -75,8 +75,9 @@
             </div>
         </div>
     </div>
-    <div *ngIf="dice() == 0 && selectedCard() == ''" class="right-hud" [class.dimmed]="monsterSelectedCards().length > 0">
+    <div *ngIf="dice() == 0 && selectedCard() == ''" class="right-hud" [class.board]="boardMode()" [style.--ar]="boardAspectRatio()" [class.dimmed]="monsterSelectedCards().length > 0">
         <div class="dice-tray">
+            <div class="hud-title">Dados</div>
             <div class="dice-tray-row">
                 <div class="dice-view">
                     <ion-img src="/assets/dices/d20.png" (click)="rollD20()"></ion-img>
@@ -96,7 +97,7 @@
             </ion-button>
         </div>
         <div *ngIf="boardMode() && boardLog().length > 0" class="board-log">
-            <div class="board-log-title">Histórico</div>
+            <div class="hud-title">Histórico</div>
             <div class="board-log-list">
                 <div *ngFor="let entry of boardLog(); let i = index" class="board-log-entry" [class.latest]="i === 0">{{ entry }}</div>
             </div>
@@ -113,7 +114,7 @@
         [class.many-monsters]="monsterSelectedCards().length >= 6"
         [style.--monster-count]="monsterSelectedCards().length"
     >
-        <div *ngFor="let card of monsterSelectedCards(); let i = index;" class="card" [class.dying]="card.isDying" [class.monster-revived-flash]="card.reviveFlash">
+        <div *ngFor="let card of monsterSelectedCards(); let i = index; trackBy: trackByMonster" class="card" [class.dying]="card.isDying" [class.monster-revived-flash]="card.reviveFlash">
             <ion-img [src]="card.source" (click)="monsterCardView(card.source)"></ion-img>
 
             <div class="monster-stats">

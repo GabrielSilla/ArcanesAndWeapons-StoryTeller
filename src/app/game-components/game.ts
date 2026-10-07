@@ -232,14 +232,26 @@ export class Game {
     }
 
     /** HP do encontro atual (nível × dificuldade + modificador de boss do bloco). */
-    private cloneMonsterWithEncounterHp(baseCard: CardModel): CardModel {
+    private cloneMonsterWithEncounterHp(baseCard: CardModel): CardModel & { uid: number } {
         const hpModifier = this.storyBlock().bossHpModifier ?? 0;
         const level = this.storyBlock().level;
         const hpPerLevel = hpPerLevelFor(this.difficultyId());
         return {
             ...baseCard,
-            hp: baseCard.hp + hpPerLevel * level + hpModifier
+            hp: baseCard.hp + hpPerLevel * level + hpModifier,
+            uid: ++this.monsterUidSeq
         };
+    }
+
+    /** Id único de cada carta em campo (o mesmo monstro pode sair mais de uma vez). */
+    private monsterUidSeq = 0;
+
+    /**
+     * Mantém o mesmo elemento da carta enquanto o HP muda. Sem isso o Angular recria a
+     * carta a cada +/- (o objeto muda), e a imagem recarrega, parecendo uma piscada.
+     */
+    trackByMonster(_index: number, card: { uid: number }) {
+        return card.uid;
     }
 
     /**
@@ -323,6 +335,12 @@ export class Game {
 
     boardMode() {
         return this.board() !== null;
+    }
+
+    /** Proporção da arte do tabuleiro; o HUD usa para calcular a faixa livre ao lado do mapa */
+    boardAspectRatio(): number {
+        const art = this.board()?.maps[0];
+        return art ? art.width / art.height : 16 / 9;
     }
 
     private startBoard(board: StoryBoard) {
@@ -570,6 +588,7 @@ export class Game {
                         const revived = this.cloneMonsterWithEncounterHp(template);
                         copy[index] = {
                             ...revived,
+                            uid: monster.uid, // mesma carta em campo
                             attack: revived.attack + ARAUTO_REVIVE_ATTACK_BONUS,
                             bossReviveConsumed: true,
                             reviveFlash: true,

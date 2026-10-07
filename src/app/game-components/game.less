@@ -64,6 +64,8 @@
         ion-button {
             font-family: "MedievalSharpBook";
             font-size: calc(14px * var(--ui-scale));
+            // o Ionic coloca botões em caixa alta por padrão
+            text-transform: none;
         }
     }
 }
@@ -136,6 +138,51 @@
         filter: brightness(0.6);
         pointer-events: none;
     }
+
+    // No tabuleiro, a coluna ocupa a faixa livre ao lado do mapa (largura e altura).
+    // --stage-w repete a conta do .board-stage (board.less); sobrando menos que o mínimo
+    // (telas quase 16:9, onde o mapa já ocupa a largura toda), mantém uma coluna estreita
+    // sobre o canto, como antes.
+    &.board {
+        --stage-w: min(calc(100vw - 32px), calc((100vh - 32px) * var(--ar, 1.79)));
+        width: max(calc(150px * var(--ui-scale)), calc(100vw - var(--stage-w) - 48px));
+        // mesmas margens de 16px do .board-stage, para a coluna alinhar com o mapa
+        top: 16px;
+        right: 16px;
+        bottom: 16px;
+        box-sizing: border-box;
+
+        .dice-tray {
+            flex: 0 0 auto;
+
+            .dice-tray-row {
+                justify-content: space-evenly;
+            }
+        }
+
+        .board-log {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-width: none;
+            display: flex;
+            flex-direction: column;
+
+            .board-log-list {
+                flex: 1 1 auto;
+                min-height: 0;
+                max-height: none;
+            }
+        }
+    }
+}
+
+// Título dos painéis do HUD ("Dados", "Histórico")
+.hud-title {
+    font-family: "MedievalSharpBook";
+    font-size: calc(13px * var(--ui-scale));
+    color: #eecda3;
+    padding-bottom: calc(6px * var(--ui-scale));
+    border-bottom: 1px solid rgba(207, 168, 106, 0.25);
 }
 
 // Caixinha dos dados (d20/d12/d4 avulsos + o botão de rolar o d6 do tabuleiro),
@@ -177,13 +224,8 @@
     border: 1px solid rgba(207, 168, 106, 0.4);
     border-radius: calc(14px * var(--ui-scale));
 
-    .board-log-title {
-        font-family: "MedievalSharpBook";
-        font-size: calc(13px * var(--ui-scale));
-        color: #eecda3;
+    .hud-title {
         margin-bottom: calc(6px * var(--ui-scale));
-        padding-bottom: calc(6px * var(--ui-scale));
-        border-bottom: 1px solid rgba(207, 168, 106, 0.25);
     }
 
     .board-log-list {
@@ -215,6 +257,14 @@
 
 // Cartas de monstro: centro do ecrã (horizontal + vertical); pointer-events só nas cartas
 .right-bottom-view {
+    // Espaço que os valores de ataque/vida e os botões +/- ocupam abaixo da carta;
+    // é reservado embaixo do contêiner para que a carta suba e os botões não saiam da tela.
+    --card-extra: calc(80px * var(--ui-scale));
+    // Tamanho nominal da carta, limitado pela altura disponível (celular em paisagem tem
+    // só ~360px). Em telas altas, vale o tamanho nominal.
+    --card-h: min(calc(267px * var(--ui-scale)), calc(100vh - var(--card-extra) - 24px));
+    --card-w: calc(var(--card-h) * 179 / 267);
+
     position: fixed;
     inset: 0;
     display: flex;
@@ -222,15 +272,15 @@
     justify-content: center;
     align-items: center;
     align-content: center;
-    padding: 12px;
+    padding: 12px 12px calc(12px + var(--card-extra));
     box-sizing: border-box;
     z-index: 5;
     pointer-events: none;
 
     .card {
         pointer-events: auto;
-        width: calc(179px * var(--ui-scale));
-        height: calc(267px * var(--ui-scale));
+        width: var(--card-w);
+        height: var(--card-h);
         padding: 2px 2px 2px 2px;
         position: relative;
         border-color: white;
@@ -263,6 +313,8 @@
     }
 
     &.many-monsters {
+        // com muitas cartas os botões ficam mais compactos (ver .minus/.plus abaixo)
+        --card-extra: 44px;
         flex-wrap: nowrap;
         align-content: center;
         justify-content: flex-start;
@@ -276,10 +328,10 @@
             flex: 0 0 auto;
             display: flex;
             flex-direction: column;
-            width: min(calc(179px * var(--ui-scale)), calc((100vw - 48px) / var(--monster-count, 6)));
+            width: min(var(--card-w), calc((100vw - 48px) / var(--monster-count, 6)));
             height: auto;
             aspect-ratio: 179 / 267;
-            max-height: min(85vh, calc(267px * var(--ui-scale)));
+            max-height: min(85vh, var(--card-h));
             margin: 0 4px;
             align-self: center;
 
@@ -308,18 +360,38 @@
             }
         }
 
+        // Botões +/- proporcionais à largura da carta (1cqw = 1% da largura dela): os valores
+        // abaixo equivalem ao tamanho que tinham numa carta de 179px, e encolhem junto com ela.
+        .card {
+            container-type: inline-size;
+        }
+
+        .minus,
+        .plus {
+            bottom: -24.6cqw;
+            // piso de 22px para o botão continuar tocável com o dedo
+            width: max(16.2cqw, 22px);
+            height: max(16.2cqw, 22px);
+            min-width: 0;
+            min-height: 0;
+            // o Ionic tem tamanho mínimo e preenchimento fixos; zerados para o botão
+            // acompanhar a largura da carta
+            --padding-start: 0;
+            --padding-end: 0;
+            --padding-top: 0;
+            --padding-bottom: 0;
+
+            ion-icon {
+                font-size: max(9.5cqw, 13px);
+            }
+        }
+
         .minus {
-            bottom: -44px;
-            left: 28px;
-            transform: scale(0.85);
-            transform-origin: center top;
+            left: 15.6cqw;
         }
 
         .plus {
-            bottom: -44px;
-            right: 28px;
-            transform: scale(0.85);
-            transform-origin: center top;
+            right: 15.6cqw;
         }
     }
 }
@@ -743,7 +815,7 @@ ion-icon {
     }
 
     .right-bottom-view.many-monsters .card {
-        width: min(calc(179px * var(--ui-scale)), calc((100vw - 24px) / var(--monster-count, 6)));
+        width: min(var(--card-w), calc((100vw - 24px) / var(--monster-count, 6)));
     }
 
     .magic-card {
