@@ -28,10 +28,24 @@ html, body {
 }
 
 @font-face {
+  // letras e pontuação da fonte decorativa — nunca dígitos, ver bloco abaixo
   font-family: 'MedievalSharpBook';
   src: url('/assets/font/MedievalSharp-Book.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+  unicode-range: U+0020-002F, U+003A-007E, U+00A0-00FF, U+0100-017F, U+2000-206F;
+}
+
+@font-face {
+  // dígitos 0-9: a MedievalSharpBook desenha o "6" de um jeito que lê como "G".
+  // Mesmo nome de família, unicode-range cobrindo só os dígitos: o navegador
+  // "costura" os dois @font-face como se fossem uma fonte só, sem precisar
+  // mudar font-family em nenhum componente que já usa "MedievalSharpBook".
+  font-family: 'MedievalSharpBook';
+  src: local('Roboto'), local('Noto Sans'), local('Helvetica Neue'), local('Arial'), local('sans-serif');
+  font-weight: normal;
+  font-style: normal;
+  unicode-range: U+0030-0039;
 }
 
 .rpg-action-sheet {

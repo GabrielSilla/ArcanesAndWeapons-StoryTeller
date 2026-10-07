@@ -22,18 +22,18 @@
 
 .board-stage {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: min(100vw, calc(var(--board-height, 100vh) * var(--ar)));
+    // ancorado no topo-esquerda da tela (mesma margem da coluna de HUD no canto oposto)
+    top: 16px;
+    left: 16px;
+    // cresce até esbarrar na borda da tela — largura ou altura, o que vier primeiro —
+    // mantendo a margem de 16px também embaixo/à direita.
+    width: min(calc(100vw - 32px), calc((100vh - 32px) * var(--ar)));
     aspect-ratio: var(--ar);
-}
 
-// Telas altas (monitores): o mapa ocupa 80% da altura; celular/tablet usam a altura toda
-@media screen and (min-height: 600px) {
-    .board-stage {
-        --board-height: 80vh;
-    }
+    // mesma borda do preview em tools/node-map-preview (#stage)
+    border: 1px solid rgba(207, 168, 106, 0.55);
+    border-radius: 14px;
+    overflow: hidden;
 }
 
 .board-art,

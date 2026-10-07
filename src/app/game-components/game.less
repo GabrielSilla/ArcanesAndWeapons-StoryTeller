@@ -115,13 +115,94 @@
     padding:10px;
 }
 
-.right-top-view {
+// Coluna fixa no canto superior direito: caixinha dos dados + histórico embaixo dela.
+// z-index abaixo do .right-bottom-view (cartas de monstro, z-index 5): durante
+// combate as cartas sobrepõem o HUD, que escurece junto com o tabuleiro.
+.right-hud {
     position: absolute;
-    right: 20px;
-    top: 20px;
-    width: 20%;
-    padding:10px;
-    justify-items: end;
+    right: calc(16px * var(--ui-scale));
+    top: calc(16px * var(--ui-scale));
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: calc(12px * var(--ui-scale));
+    opacity: 1;
+    filter: brightness(1);
+    transition: opacity 0.4s ease, filter 0.4s ease;
+
+    &.dimmed {
+        opacity: 0.4;
+        filter: brightness(0.6);
+        pointer-events: none;
+    }
+}
+
+// Caixinha dos dados (d20/d12/d4 avulsos + o botão de rolar o d6 do tabuleiro),
+// no mesmo estilo de painel usado no preview do mapa (tools/node-map-preview).
+.dice-tray {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: calc(10px * var(--ui-scale));
+    padding: calc(10px * var(--ui-scale)) calc(14px * var(--ui-scale));
+    background: rgba(35, 35, 35, 0.85);
+    border: 1px solid rgba(207, 168, 106, 0.4);
+    border-radius: calc(14px * var(--ui-scale));
+
+    .dice-tray-row {
+        display: flex;
+        justify-content: center;
+        gap: calc(10px * var(--ui-scale));
+    }
+
+    .dice-view {
+        margin-bottom: 0;
+    }
+
+    .dice-tray-btn {
+        font-family: "MedievalSharpBook";
+        font-size: calc(13px * var(--ui-scale));
+        margin: 0;
+        width: 100%;
+    }
+}
+
+// Histórico de rolagens/paradas do tabuleiro — mesmo painel da .dice-tray,
+// empilhado logo abaixo dela dentro do .right-hud.
+.board-log {
+    max-width: calc(240px * var(--ui-scale));
+    padding: calc(10px * var(--ui-scale)) calc(14px * var(--ui-scale));
+    background: rgba(35, 35, 35, 0.85);
+    border: 1px solid rgba(207, 168, 106, 0.4);
+    border-radius: calc(14px * var(--ui-scale));
+
+    .board-log-title {
+        font-family: "MedievalSharpBook";
+        font-size: calc(13px * var(--ui-scale));
+        color: #eecda3;
+        margin-bottom: calc(6px * var(--ui-scale));
+        padding-bottom: calc(6px * var(--ui-scale));
+        border-bottom: 1px solid rgba(207, 168, 106, 0.25);
+    }
+
+    .board-log-list {
+        display: flex;
+        flex-direction: column;
+        gap: calc(3px * var(--ui-scale));
+        max-height: calc(130px * var(--ui-scale));
+        overflow-y: auto;
+    }
+
+    .board-log-entry {
+        font-family: "MedievalSharpBook";
+        font-size: calc(12px * var(--ui-scale));
+        color: #c9b393;
+
+        &.latest {
+            color: #f7d7a8;
+        }
+    }
 }
 
 .left-bottom-view {

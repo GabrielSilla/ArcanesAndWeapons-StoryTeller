@@ -1,5 +1,5 @@
 ---
-name: Rules Component Screen
+name: Tela do Componente de Regras
 overview: Criar o componente Rules que exibe as regras do jogo "Armas e Arcanos" em um modal scrollável, seguindo o padrão do story-selector, com botão de informação na tela principal e design consistente com o projeto.
 todos:
   - id: todo-1773776869119-kn9luy7zr

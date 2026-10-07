@@ -54,16 +54,6 @@
         {{ storyBlockIndex() > 0 ? "Continuar" : "Iniciar" }}
     </ion-button>
 </div>
-<div *ngIf="boardMode() && !boardFinished()" class="next-btn">
-    <ion-button [disabled]="boardMoving() || monsterSelectedCards().length > 0 || storyTextModal() != ''" fill="outline" size="small" class="pulse-button" (click)="rollMovement()">
-        Rolar d6
-    </ion-button>
-</div>
-<div *ngIf="boardMode() && boardFinished()" class="next-btn">
-    <ion-button [disabled]="monsterSelectedCards().length > 0" fill="outline" size="small" class="pulse-button" (click)="reset()">
-        Resetar
-    </ion-button>
-</div>
 <div *ngIf="hasStorySelected() && !boardMode() && storyBlockIndex() == storyBlockCount() && storyBlockIndex() > 0" class="next-btn">
     <ion-button [disabled]="monsterSelectedCards().length > 0" fill="outline" size="small"  class="pulse-button" (click)="reset()">
         Resetar
@@ -85,18 +75,31 @@
             </div>
         </div>
     </div>
-    <div *ngIf="dice() == 0 && selectedCard() == '' && hasStorySelected()" class="left-top-view story-moment-view">
-        <ion-label class="story-moment-title" color="primary">{{ storyBlock()?.title }}</ion-label>
-    </div>
-    <div *ngIf="dice() == 0 && selectedCard() == ''" class="right-top-view">
-        <div class="dice-view">
-            <ion-img src="/assets/dices/d20.png" (click)="rollD20()"></ion-img>
+    <div *ngIf="dice() == 0 && selectedCard() == ''" class="right-hud" [class.dimmed]="monsterSelectedCards().length > 0">
+        <div class="dice-tray">
+            <div class="dice-tray-row">
+                <div class="dice-view">
+                    <ion-img src="/assets/dices/d20.png" (click)="rollD20()"></ion-img>
+                </div>
+                <div class="dice-view">
+                    <ion-img src="/assets/dices/d12.png" (click)="rollD12()"></ion-img>
+                </div>
+                <div class="dice-view">
+                    <ion-img src="/assets/dices/d4.png" (click)="rollD4()"></ion-img>
+                </div>
+            </div>
+            <ion-button *ngIf="boardMode() && !boardFinished()" [disabled]="boardMoving() || monsterSelectedCards().length > 0 || storyTextModal() != ''" fill="outline" size="small" class="pulse-button dice-tray-btn" (click)="rollMovement()">
+                Rolar d6
+            </ion-button>
+            <ion-button *ngIf="boardMode() && boardFinished()" [disabled]="monsterSelectedCards().length > 0" fill="outline" size="small" class="pulse-button dice-tray-btn" (click)="reset()">
+                Resetar
+            </ion-button>
         </div>
-        <div class="dice-view">
-            <ion-img src="/assets/dices/d12.png" (click)="rollD12()"></ion-img>
-        </div>
-        <div class="dice-view">
-            <ion-img src="/assets/dices/d4.png" (click)="rollD4()"></ion-img>
+        <div *ngIf="boardMode() && boardLog().length > 0" class="board-log">
+            <div class="board-log-title">Histórico</div>
+            <div class="board-log-list">
+                <div *ngFor="let entry of boardLog(); let i = index" class="board-log-entry" [class.latest]="i === 0">{{ entry }}</div>
+            </div>
         </div>
     </div>
 

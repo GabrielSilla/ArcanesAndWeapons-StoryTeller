@@ -116,6 +116,8 @@ export class Game {
     boardMoving = signal(false);
     boardFinished = signal(false);
     boardChoice = signal<{ title: string; options: { label: string; targetNodeId: string }[] } | null>(null);
+    /** Histórico de rolagens/paradas no tabuleiro, mais recente primeiro (igual ao preview) */
+    boardLog = signal<string[]>([]);
     private boardChoiceResolver: ((nodeId: string) => void) | null = null;
     /** Caminho já escolhido numa bifurcação em que o grupo está parado */
     private boardForkChoice: string | null = null;
@@ -329,8 +331,14 @@ export class Game {
         this.boardFinished.set(false);
         this.boardForkChoice = null;
         this.monsterSelectedCards.set([]);
+        this.boardLog.set([]);
         this.storyBlock.set({ title: BOARD_NODE_TITLES.start, monsterType: '', level: 0, boss: false });
         this.showStoryText(board.intro);
+    }
+
+    /** Acrescenta uma linha ao histórico do tabuleiro (mais recente no topo) */
+    private pushBoardLog(line: string) {
+        this.boardLog.update(list => [line, ...list].slice(0, 30));
     }
 
     private boardNode(id: string): BoardNode {
@@ -359,6 +367,7 @@ export class Game {
         this.boardMoving.set(true);
 
         const result = Math.floor(Math.random() * 6) + 1;
+        this.pushBoardLog(`🎲 Rolou ${result}`);
         for (let i = 0; i < 10; i++) {
             this.dice.set(Math.floor(Math.random() * 6) + 1);
             await sleep(80);
@@ -400,6 +409,7 @@ export class Game {
     private async arriveAtNode(node: BoardNode) {
         const board = this.board()!;
         const base = { title: BOARD_NODE_TITLES[node.type], monsterType: '', level: 0, boss: false };
+        this.pushBoardLog(`📍 ${base.title}`);
 
         switch (node.type) {
             case 'battle':
@@ -637,6 +647,7 @@ export class Game {
         this.storyBlockIndex.set(0);
         this.board.set(null);
         this.boardNodeId.set('');
+        this.boardLog.set([]);
         this.boardFinished.set(false);
         this.boardChoice.set(null);
         this.boardForkChoice = null;
