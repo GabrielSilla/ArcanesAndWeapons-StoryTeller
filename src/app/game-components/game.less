@@ -12,7 +12,7 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: calc(100 * var(--vh));
     background: rgba(0, 0, 0, 0.7); // máscara escura semitransparente
     opacity: 1;
     pointer-events: none;
@@ -25,7 +25,7 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: calc(100 * var(--vh));
     background: rgba(0, 0, 0, 0.85);
     z-index: 9998;
 }
@@ -144,7 +144,7 @@
     // (telas quase 16:9, onde o mapa já ocupa a largura toda), mantém uma coluna estreita
     // sobre o canto, como antes.
     &.board {
-        --stage-w: min(calc(100vw - 32px), calc((100vh - 32px) * var(--ar, 1.79)));
+        --stage-w: min(calc(100vw - 32px), calc((calc(100 * var(--vh)) - 32px) * var(--ar, 1.79)));
         width: max(calc(150px * var(--ui-scale)), calc(100vw - var(--stage-w) - 48px));
         // mesmas margens de 16px do .board-stage, para a coluna alinhar com o mapa
         top: 16px;
@@ -259,10 +259,10 @@
 .right-bottom-view {
     // Espaço que os valores de ataque/vida e os botões +/- ocupam abaixo da carta;
     // é reservado embaixo do contêiner para que a carta suba e os botões não saiam da tela.
-    --card-extra: calc(80px * var(--ui-scale));
+    --card-extra: calc(88px * var(--ui-scale));
     // Tamanho nominal da carta, limitado pela altura disponível (celular em paisagem tem
     // só ~360px). Em telas altas, vale o tamanho nominal.
-    --card-h: min(calc(267px * var(--ui-scale)), calc(100vh - var(--card-extra) - 24px));
+    --card-h: min(calc(267px * var(--ui-scale)), calc(calc(100 * var(--vh)) - var(--card-extra) - 24px));
     --card-w: calc(var(--card-h) * 179 / 267);
 
     position: fixed;
@@ -285,31 +285,45 @@
         position: relative;
         border-color: white;
         margin: 0px 10px 0px 10px;
+        // 1cqw = 1% da largura da carta: os botões +/- acompanham a carta (ver abaixo)
+        container-type: inline-size;
     }
 
     .minus {
         position: absolute;
-        bottom: calc(-80px * var(--ui-scale));
-        left: calc(50px * var(--ui-scale));
+        bottom: calc(-88px * var(--ui-scale));
+        left: 10cqw;
     }
     .plus {
         position: absolute;
-        bottom: calc(-80px * var(--ui-scale));
-        right: calc(50px * var(--ui-scale));
+        bottom: calc(-88px * var(--ui-scale));
+        right: 10cqw;
     }
 
-    ion-button.minus,
-    ion-button.plus {
-        font-size: calc(13px * var(--ui-scale));
-
-        ion-icon {
-            font-size: calc(20px * var(--ui-scale));
-        }
-    }
-
+    // Botões +/-: tamanho proporcional à largura da carta, com piso de 30px para o toque.
+    // O Ionic tem tamanho mínimo e preenchimento fixos; zerados para o botão acompanhar a carta.
     ion-button.minus,
     ion-button.plus {
         --ripple-color: transparent;
+        --padding-start: 0;
+        --padding-end: 0;
+        --padding-top: 0;
+        --padding-bottom: 0;
+        width: 16.2cqw;
+        height: 16.2cqw;
+        min-width: 30px;
+        min-height: 30px;
+
+        ion-icon {
+            font-size: max(9.5cqw, 18px);
+        }
+
+        // área de toque maior que o desenho do botão
+        &::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+        }
     }
 
     &.many-monsters {
@@ -331,7 +345,7 @@
             width: min(var(--card-w), calc((100vw - 48px) / var(--monster-count, 6)));
             height: auto;
             aspect-ratio: 179 / 267;
-            max-height: min(85vh, var(--card-h));
+            max-height: min(calc(85 * var(--vh)), var(--card-h));
             margin: 0 4px;
             align-self: center;
 
@@ -360,38 +374,12 @@
             }
         }
 
-        // Botões +/- proporcionais à largura da carta (1cqw = 1% da largura dela): os valores
-        // abaixo equivalem ao tamanho que tinham numa carta de 179px, e encolhem junto com ela.
-        .card {
-            container-type: inline-size;
-        }
-
+        // Aqui a caixa da carta já inclui os valores de ataque/vida; os botões ficam logo abaixo
+        // dela (o tamanho e o espaçamento lateral vêm da regra comum acima).
         .minus,
         .plus {
-            bottom: -24.6cqw;
-            // piso de 22px para o botão continuar tocável com o dedo
-            width: max(16.2cqw, 22px);
-            height: max(16.2cqw, 22px);
-            min-width: 0;
-            min-height: 0;
-            // o Ionic tem tamanho mínimo e preenchimento fixos; zerados para o botão
-            // acompanhar a largura da carta
-            --padding-start: 0;
-            --padding-end: 0;
-            --padding-top: 0;
-            --padding-bottom: 0;
-
-            ion-icon {
-                font-size: max(9.5cqw, 13px);
-            }
-        }
-
-        .minus {
-            left: 15.6cqw;
-        }
-
-        .plus {
-            right: 15.6cqw;
+            bottom: auto;
+            top: calc(100% + 8cqw);
         }
     }
 }
@@ -611,7 +599,7 @@ ion-icon {
     margin: 0;
 
     img {
-        max-height: min(95vh, 100%);
+        max-height: min(calc(95 * var(--vh)), 100%);
         max-width: min(95vw, 100%);
         width: auto;
         height: auto;
@@ -625,7 +613,7 @@ ion-icon {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: calc(100 * var(--vh));
     background: white;
     opacity: 0;
     pointer-events: none;

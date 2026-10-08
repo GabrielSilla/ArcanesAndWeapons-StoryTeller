@@ -27,7 +27,7 @@
     left: 16px;
     // cresce até esbarrar na borda da tela — largura ou altura, o que vier primeiro —
     // mantendo a margem de 16px também embaixo/à direita.
-    width: min(calc(100vw - 32px), calc((100vh - 32px) * var(--ar)));
+    width: min(calc(100vw - 32px), calc((calc(100 * var(--vh)) - 32px) * var(--ar)));
     aspect-ratio: var(--ar);
 
     // mesma borda do preview em tools/node-map-preview (#stage)

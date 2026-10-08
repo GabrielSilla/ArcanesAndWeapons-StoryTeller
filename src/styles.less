@@ -5,6 +5,18 @@ html, body {
   padding: 0;
 }
 
+/* 1 "vh" do jogo. No Safari do iPhone, vh é a altura SEM as barras do navegador, então com as
+   barras visíveis o conteúdo passa do fim da tela; dvh acompanha a altura realmente visível. */
+:root {
+  --vh: 1vh;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --vh: 1dvh;
+  }
+}
+
 @import "@ionic/angular/css/core.css";
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";

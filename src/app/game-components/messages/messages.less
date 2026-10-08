@@ -3,7 +3,7 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: calc(100 * var(--vh));
     background: rgba(0, 0, 0, 0.7); // máscara escura semitransparente
     opacity: 1;
     z-index: 999;
@@ -26,7 +26,7 @@
 .message.ft-15 {
     width: 90%;
     max-width: 90vw;
-    max-height: 90vh;
+    max-height: calc(90 * var(--vh));
     overflow-x: hidden;
     overflow-y: auto;
     padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
