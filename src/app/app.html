@@ -5,4 +5,16 @@
     <app-game (bgChange)="changeBg($event)"></app-game>
   </div>
 </main>
+
+<!-- Aviso de rotação: só aparece em aparelhos de toque em retrato (ver app.less) -->
+<div class="rotate-overlay" role="alert">
+  <svg class="rotate-icon" viewBox="0 0 64 64" width="96" height="96" fill="none" stroke="currentColor"
+       stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <rect x="20" y="6" width="24" height="44" rx="4" />
+    <line x1="29" y1="44" x2="35" y2="44" />
+    <path d="M50 54a22 22 0 0 0 8-14" />
+    <polyline points="58 46 58 40 52 40" />
+  </svg>
+  <p>Gire o celular para a horizontal para jogar</p>
+</div>
 <router-outlet />

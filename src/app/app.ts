@@ -33,9 +33,41 @@ export class App {
     this.musicService = musicService;
 
     this.InitScreen();
+    this.setupWebOrientationLock();
     const width = window.innerWidth;
 
     this.bgN.set("bg-portal");
+  }
+
+  /**
+   * No navegador (fora do app nativo, que já trava em paisagem), tenta travar a tela em
+   * horizontal. Só funciona no Android (Chrome/Firefox), em tela cheia e depois de um toque
+   * do jogador. Onde não há suporte (ex.: Safari do iPhone), o aviso de rotação do
+   * app.html/app.less cobre o caso.
+   */
+  private setupWebOrientationLock() {
+    if (Capacitor.isNativePlatform()) return;
+    if (!window.matchMedia('(pointer: coarse)').matches) return; // só celular/tablet
+
+    const tryLock = async () => {
+      try {
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        }
+        await (screen.orientation as any)?.lock?.('landscape');
+      } catch {
+        /* sem suporte ou recusado: o aviso de rotação continua valendo */
+      }
+    };
+
+    // primeiro toque do jogador; depois, só quando ele estiver em retrato (vendo o aviso)
+    let firstTouch = true;
+    document.addEventListener('pointerup', () => {
+      if (firstTouch || window.matchMedia('(orientation: portrait)').matches) {
+        firstTouch = false;
+        tryLock();
+      }
+    });
   }
 
   changeBg(event: string) {

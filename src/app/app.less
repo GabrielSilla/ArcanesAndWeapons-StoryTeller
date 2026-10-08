@@ -136,3 +136,43 @@
       margin-block: 1.5rem;
     }
   }
+
+  // Aviso de rotação: celulares/tablets (toque) em retrato. O jogo é pensado para paisagem;
+  // no app nativo a orientação já é travada, então aqui só vale para o navegador.
+  .rotate-overlay {
+    display: none;
+  }
+
+  @media screen and (orientation: portrait) and (pointer: coarse) {
+    .rotate-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 24px;
+      box-sizing: border-box;
+      background: #141210;
+      color: #f7d7a8;
+      font-family: "MedievalSharpBook";
+      font-size: 20px;
+      text-align: center;
+
+      p {
+        margin: 0;
+        color: inherit;
+      }
+    }
+
+    .rotate-icon {
+      animation: rotate-hint 2.4s ease-in-out infinite;
+    }
+  }
+
+  @keyframes rotate-hint {
+    0%, 20% { transform: rotate(0deg); }
+    60%, 100% { transform: rotate(-90deg); }
+  }
